@@ -1,64 +1,82 @@
-<<<<<<< HEAD
-# StockflowFrontend
+# Stockflow Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.19.
+Sistema de gestión de inventarios construido con Angular.
 
-## Development server
+## Características Implementadas
 
-To start a local development server, run:
+- **Autenticación Completa**:
+  - Inicio de sesión (Login) y Registro de usuarios.
+  - Gestión de Tokens (JWT) con interceptores para adjuntar token automáticamente.
+  - Renovación de tokens (Refresh Token).
+  - Validaciones de formularios reactivos.
+  - Layout dedicado para autenticación.
+
+- **Configuración de Entornos**:
+  - **Local**: Para desarrollo en máquina local con backend local.
+  - **Development**: Para entorno de desarrollo en servidor remoto.
+  - **Production**: Para despliegue en producción.
+
+- **Proxy y Configuración de Red**:
+  - Proxy configurado (`proxy.conf.json`) para evitar problemas de CORS en desarrollo local.
+  - Puerto por defecto configurado a **4500**.
+
+## Requisitos Previos
+
+- Node.js
+- pnpm (Gestor de paquetes utilizado)
+- Angular CLI
+
+## Instalación
+
+1. Clonar el repositorio.
+2. Instalar dependencias:
+   ```bash
+   pnpm install
+   ```
+
+## Ejecución del Proyecto
+
+### Entorno Local (Recomendado para desarrollo)
+
+Este comando levanta la aplicación en el puerto **4500** y utiliza el proxy para redirigir las peticiones al backend local (`localhost:8080`).
 
 ```bash
 ng serve
+# O explícitamente:
+ng serve --configuration=local
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Accede a la aplicación en: `http://localhost:4500/`
 
-## Code scaffolding
+### Entorno de Desarrollo (Dev)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Conecta con el backend de desarrollo en `api-cluster.stockflow.pe`.
 
 ```bash
-ng generate component component-name
+ng serve --configuration=development
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Entorno de Producción
+
+Simula la configuración de producción.
 
 ```bash
-ng generate --help
+ng serve --configuration=production
 ```
 
-## Building
+## Estructura del Proyecto
 
-To build the project run:
+- `src/app/core`: Servicios singleton, interceptores y guardias (AuthService, AuthInterceptor).
+- `src/app/auth`: Módulo de autenticación (Login, Register, AuthLayout).
+- `src/environments`: Archivos de configuración de entorno (`.local.ts`, `.dev.ts`, `.prod.ts`).
+- `proxy.conf.json`: Configuración del proxy para desarrollo local.
+
+## Build
+
+Para generar los archivos de distribución para producción:
 
 ```bash
-ng build
+ng build --configuration=production
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
-=======
-# stockflow-frontend
-sistema de gestión de inventarios
->>>>>>> 37ea0213d83615ad53dfad949dcc2fd76ee20db0
+Los archivos se generarán en la carpeta `dist/stockflow-frontend`.
