@@ -1,0 +1,29 @@
+<div class="p-4 flex items-center gap-2 bg-surface-0 dark:bg-surface-900">
+      <!-- Menu Toggle Button -->
+      <!-- Visible on Mobile OR if Overlay Mode on Desktop -->
+      <p-button
+        *ngIf="showMenuToggle"
+        (click)="onMenuToggle()"
+        icon="pi pi-bars"
+        [text]="true"
+        severity="secondary"
+        [class.lg:hidden]="menuMode === 'static' && !alwaysShowMenuToggle"
+      />
+
+      <!-- Right Actions -->
+      <div class="ml-auto flex items-center gap-2">
+        <!-- Theme Toggle -->
+        <p-button
+          (click)="onThemeToggle()"
+          [icon]="isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+          severity="secondary"
+        />
+
+        <!-- Palette/Settings -->
+        <p-button
+          icon="pi pi-palette"
+          (click)="onSettingsClick($event)"
+          severity="secondary"
+        />
+      </div>
+    </div>

@@ -1,10 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { ThemeService } from '../../../../core/services/theme.service';
+import { ImportsModule } from '../../../../imports';
 
 @Component({
-	selector: 'app-auth-layout',
-	imports: [RouterOutlet],
-	templateUrl: './auth-layout.component.html',
-	styleUrl: './auth-layout.component.css',
+  selector: 'auth-layout',
+  imports: [RouterOutlet, ButtonModule, ImportsModule],
+  templateUrl: './auth-layout.component.html',
 })
-export class AuthLayoutComponent {}
+export class AuthLayoutComponent {
+  private readonly themeService = inject(ThemeService);
+  isDarkMode = this.themeService.isDarkMode;
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
+  }
+}

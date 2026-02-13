@@ -1,0 +1,14 @@
+<!-- Static Sidebar -->
+<div
+  *ngIf="menuMode === 'static'"
+  class="w-[280px] shrink-0 border-r border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900 h-screen sticky top-0 overflow-y-auto hidden lg:block"
+>
+  <menu></menu>
+</div>
+
+<!-- Overlay Sidebar -->
+<p-drawer [visible]="visible" (visibleChange)="visibleChange.emit($event)" [modal]="true">
+  <ng-template #headless>
+    <menu [isOverlay]="true" (close)="visibleChange.emit(false)"></menu>
+  </ng-template>
+</p-drawer>

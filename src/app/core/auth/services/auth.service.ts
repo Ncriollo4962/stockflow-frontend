@@ -6,6 +6,9 @@ import { Usuario } from '../interfaces/usuario';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { AuthResponse } from '../interfaces/auth-response';
 import { RequestTokenRefresh } from '../interfaces/requestTokenRefresh';
+import { RequestLogin } from '../interfaces/requestLogin';
+import { ApiResponse } from '../../utils/ApiResponse';
+import { MessageService } from 'primeng/api';
 
 type AuthStatus = 'checking' | 'authenticated' | 'no-authenticated';
 
@@ -13,6 +16,8 @@ type AuthStatus = 'checking' | 'authenticated' | 'no-authenticated';
   providedIn: 'root',
 })
 export class AuthService {
+  private readonly API_URL = `${environment.HOST_STOCKFLOW}/auth`;
+
   private readonly _authStatus = signal<AuthStatus>('checking');
   private readonly _user = signal<Usuario | null>(null);
   private readonly _tokenAcces = signal<string | null>(
@@ -21,8 +26,9 @@ export class AuthService {
   private readonly _tokenRefresh = signal<string | null>(
     localStorage.getItem('tokenRefresh'),
   );
+
   private readonly http = inject(HttpClient);
-  private readonly API_URL = `${environment.HOST_STOCKFLOW}/auth`;
+  private readonly messageService = inject(MessageService);
 
   /* -------------------------------------------------------------------------- */
   /*                        PROCESO PARA LA AUTENTICACION                       */
@@ -42,13 +48,13 @@ export class AuthService {
   user = computed<Usuario | null>(() => this._user());
   tokenAcces = computed<string | null>(() => this._tokenAcces());
   tokenRefresh = computed<string | null>(() => this._tokenRefresh());
-  isAdmin = computed(() => this.user()?.roles.includes('admin') ?? false);
+  isAdmin = computed(() => this.user()?.rol.includes('ROLE_ADMIN_TI') ?? false);
 
-  login(credentials: { email: string; password: string }): Observable<boolean> {
+  login(credentials: RequestLogin): Observable<boolean> {
     return this.http
-      .post<AuthResponse>(`${this.API_URL}/login`, credentials)
+      .post<ApiResponse>(`${this.API_URL}/login`, credentials)
       .pipe(
-        map((resp) => this.handleAuthSucces(resp)),
+        map((resp) => this.handleAuthSucces(resp.data)),
         catchError((error) => this.handleAuthError(error)),
       );
   }
@@ -60,8 +66,8 @@ export class AuthService {
       return of(false);
     }
 
-    return this.http.get<AuthResponse>(`${this.API_URL}/checkStatus`).pipe(
-      map((resp) => this.handleAuthSucces(resp)),
+    return this.http.get<ApiResponse>(`${this.API_URL}/checkStatus`).pipe(
+      map((resp) => this.handleAuthSucces(resp.data)),
       catchError(() => of(false)),
     );
   }
@@ -75,14 +81,15 @@ export class AuthService {
     };
 
     return this.http
-      .post<AuthResponse>(`${this.API_URL}/refreshToken`, refreshToken)
+      .post<ApiResponse>(`${this.API_URL}/refreshToken`, refreshToken)
       .pipe(
-        map((resp) => this.handleAuthSucces(resp)),
+        map((resp) => this.handleAuthSucces(resp.data)),
         catchError(() => of(false)),
       );
   }
 
   handleAuthSucces(resp: AuthResponse): boolean {
+    console.log('Login exitoso', resp);
     this._user.set(resp.user);
     this._tokenAcces.set(resp.accessToken);
     localStorage.setItem('tokenAcces', resp.accessToken);
@@ -97,6 +104,23 @@ export class AuthService {
   }
 
   handleAuthError(error: any): Observable<boolean> {
+    console.error('Error en autenticación', error);
+    const apiResponse = error.error;
+    if (apiResponse?.titulo) {
+      this.messageService.add({
+        severity: apiResponse.type === 'E' ? 'error' : 'warn',
+        summary: apiResponse.titulo,
+        detail: apiResponse.mensaje,
+        life: 5000,
+      });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de Conexión',
+        detail: 'No se pudo contactar con el servidor.',
+        life: 5000,
+      });
+    }
     this.logout();
     return of(false);
   }

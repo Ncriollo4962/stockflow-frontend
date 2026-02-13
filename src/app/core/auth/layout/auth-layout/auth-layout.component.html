@@ -1,10 +1,20 @@
-<div class="flex items-center justify-center min-h-screen">
-  <div class="w-full max-w-xs bg-slate-100 shadow-2xl rounded-lg p-4">
-    <h1
-    class="text-2xl font-bold font-montserrat text-secondary text-center mb-2"
-     >
-     Autenticaciones
-    </h1>
-    <router-outlet/>
+<div class="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-surface-950 p-4 transition-colors duration-300">
+
+  <div class="absolute top-4 right-4">
+    <p-button
+      (onClick)="toggleTheme()"
+      [icon]="isDarkMode() ? 'pi pi-sun' : 'pi pi-moon'"
+      [rounded]="true"
+      [text]="true"
+      severity="secondary"
+      styleClass="w-12 h-12 !bg-white/80 backdrop-blur-sm dark:!bg-surface-900 shadow-lg !text-surface-900 dark:!text-surface-0 hover:!bg-white dark:hover:!bg-surface-800 transition-all"
+    ></p-button>
   </div>
+
+  <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+    <div class="bg-white/80 dark:bg-surface-900 backdrop-blur-xl py-8 px-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none rounded-2xl sm:px-10 border border-white/20 dark:border-surface-800 ring-1 ring-black/5 dark:ring-white/5">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+<p-toast position="bottom-right" />
 </div>

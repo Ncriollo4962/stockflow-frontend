@@ -1,7 +1,9 @@
 export interface Usuario {
   id: string;
+  codigo: string;
   email: string;
-  fullName: string;
-  isActive: boolean;
-  roles: string[];
+  nombre: string;
+  estado: boolean;
+  rol: string;
+  version: number;
 }

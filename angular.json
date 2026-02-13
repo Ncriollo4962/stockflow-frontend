@@ -29,6 +29,7 @@
                 "input": "public"
               }
             ],
+            "allowedCommonJsDependencies": ["quill", "quill-delta"],
             "styles": ["src/styles.scss"],
             "scripts": []
           },
@@ -79,6 +80,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
+            "liveReload": true,
+            "hmr": false,
             "port": 4500
           },
           "configurations": {

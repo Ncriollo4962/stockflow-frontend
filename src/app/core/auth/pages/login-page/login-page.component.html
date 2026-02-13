@@ -1,1 +1,65 @@
-<p>Login Page</p>
+      <div class="text-center mb-10">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 mb-4 shadow-sm">
+          <svg class="w-10 h-10 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0012 3c1.732 0 3.341.438 4.743 1.213a10.013 10.013 0 013.739 3.06m-7.614 7.74a5.986 5.986 0 01-6.741-2.941M12 7a4 4 0 110 8 4 4 0 010-8z" />
+          </svg>
+      </div>
+      <h1 class="text-3xl font-bold text-surface-900 dark:text-surface-0 tracking-tight">Bienvenido a StockFlow</h1>
+      <p class="text-surface-500 dark:text-surface-400 mt-2 font-medium">Gestiona tu negocio con inteligencia</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-6">
+
+      <div class="flex flex-col gap-2">
+        <label for="email" class="font-semibold text-sm text-surface-700 dark:text-surface-200">Correo Electrónico</label>
+        <div class="relative">
+          <i class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 dark:text-surface-500 z-10"></i>
+          <input
+            pInputText
+            formControlName="email"
+            type="email"
+            class="w-full pl-10 h-12 rounded-xl bg-surface-0 dark:bg-surface-800 border-surface-300 dark:border-surface-700 focus:border-indigo-500 dark:focus:border-indigo-400 text-surface-900 dark:text-surface-0 transition-all"
+            placeholder="nombre@empresa.com" />
+        </div>
+        @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
+          <small class="text-red-500 dark:text-red-400 font-medium ml-1">Ingresa un correo válido</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="rem" class="font-semibold text-sm text-surface-700 dark:text-surface-200">Contraseña</label>
+        <p-password
+          formControlName="password"
+          [toggleMask]="true"
+          [feedback]="false"
+          styleClass="w-full"
+          inputStyleClass="w-full h-12 pl-4 rounded-xl bg-surface-0 dark:bg-surface-800 border-surface-300 dark:border-surface-700 text-surface-900 dark:text-surface-0"
+          placeholder="••••••••">
+        </p-password>
+        @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+          <small class="text-red-500 dark:text-red-400 font-medium ml-1">La contraseña es obligatoria (mín. 6)</small>
+        }
+      </div>
+
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <input
+          type="checkbox"
+          formControlName="remember"
+          class="accent-pink-500 mr-1 p-1 rounded-md"
+           checked>
+          <label for="rem" class="text-sm text-surface-600 dark:text-surface-400 cursor-pointer select-none hover:text-surface-900 dark:hover:text-surface-200 transition-colors">Recordarme</label>
+        </div>
+        <a href="#" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button
+        pButton
+        pRipple
+        type="submit"
+        [loading]="isLoading()"
+        label="Iniciar Sesión"
+        class="w-full h-12 rounded-xl bg-indigo-500 dark:bg-indigo-500 border-none hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white text-lg font-bold shadow-lg shadow-indigo-500/30 dark:shadow-indigo-500/10 transition-all active:scale-[0.98]">
+      </button>
+    </form>
+
