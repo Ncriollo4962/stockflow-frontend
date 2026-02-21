@@ -68,7 +68,16 @@ export class AuthService {
 
     return this.http.get<ApiResponse>(`${this.API_URL}/checkStatus`).pipe(
       map((resp) => this.handleAuthSucces(resp.data)),
-      catchError(() => of(false)),
+      catchError((error) => {
+        console.error('Error en checkAuthStatus', error);
+        if (error.status === 401 || error.status === 403) {
+          this.logout();
+          return of(false);
+        }
+
+        this._authStatus.set('no-authenticated');
+        return of(false);
+      }),
     );
   }
 

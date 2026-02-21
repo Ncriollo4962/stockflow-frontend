@@ -23,7 +23,12 @@ export function authInterceptor(
 
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 401 && !req.url.includes('/auth/login')) {
+      const isAuthEndpoint =
+        req.url.includes('/auth/login') ||
+        req.url.includes('/auth/refreshToken') ||
+        req.url.includes('/auth/checkStatus');
+
+      if (error.status === 401 && !isAuthEndpoint) {
         return handleRefreshToken(authReq, next, authService);
       }
       return throwError(() => error);

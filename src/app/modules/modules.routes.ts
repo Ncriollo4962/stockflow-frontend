@@ -1,0 +1,46 @@
+import { Routes } from '@angular/router';
+import { MainLayoutComponent } from './shared/components/layout/main-layout/main-layout.component';
+import { RoleGuardCanMatch } from '../core/auth/guards/role.guard';
+
+export const modulesRoutes: Routes = [
+  {
+    path: '',
+    component: MainLayoutComponent,
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent,
+          ),
+      },
+      {
+        path: 'inventario',
+        loadComponent: () =>
+          import('./inventario/inventario.component').then(
+            (m) => m.InventarioComponent,
+          ),
+      },
+      {
+        path: 'compras',
+        loadComponent: () =>
+          import('./compras/compras.component').then((m) => m.ComprasComponent),
+      },
+      {
+        path: 'ventas',
+        loadComponent: () =>
+          import('./ventas/ventas.component').then((m) => m.VentasComponent),
+      },
+      {
+        path: 'usuarios',
+        canMatch: [RoleGuardCanMatch],
+        data: { roles: ['ROLE_ADMIN_TI'] },
+        loadComponent: () =>
+          import('./usuarios/usuarios.component').then(
+            (m) => m.UsuariosComponent,
+          ),
+      },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    ],
+  },
+];
