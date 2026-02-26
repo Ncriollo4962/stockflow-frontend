@@ -59,7 +59,7 @@
                     fill="var(--p-content-background)"
                 />
             </svg>
-            <span class="font-semibold text-2xl text-primary">Your Logo</span>
+            <span class="font-semibold text-2xl text-primary">StockFlow</span>
         </span>
         <span *ngIf="isOverlay">
             <p-button type="button" (click)="closeMenu()" icon="pi pi-times" [rounded]="true" [outlined]="true" styleClass="h-8 w-8"></p-button>
@@ -77,7 +77,7 @@
                     leaveActiveClass="animate-slideup"
                     class="p-4 flex items-center justify-between text-surface-600 dark:text-surface-200 cursor-pointer p-ripple"
                 >
-                    <span class="font-medium">FAVORITES</span>
+                    <span class="font-medium">CONTROL</span>
                     <i class="pi pi-chevron-down"></i>
                 </div>
                 <ul class="list-none p-0 m-0 overflow-hidden">
@@ -85,12 +85,6 @@
                         <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
                             <i class="pi pi-home mr-2"></i>
                             <span class="font-medium">Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-bookmark mr-2"></i>
-                            <span class="font-medium">Bookmarks</span>
                         </a>
                     </li>
                     <li>
@@ -104,7 +98,7 @@
                             class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple"
                         >
                             <i class="pi pi-chart-line mr-2"></i>
-                            <span class="font-medium">Reports</span>
+                            <span class="font-medium">Gestion inventario</span>
                             <i class="pi pi-chevron-down ml-auto"></i>
                         </a>
                         <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
@@ -119,7 +113,7 @@
                                     class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple"
                                 >
                                     <i class="pi pi-chart-line mr-2"></i>
-                                    <span class="font-medium">Revenue</span>
+                                    <span class="font-medium">Consultas inventario</span>
                                     <i class="pi pi-chevron-down ml-auto"></i>
                                 </a>
                                 <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
@@ -138,37 +132,139 @@
                                 </ul>
                             </li>
                             <li>
-                                <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                <a
+                                    pRipple
+                                    pStyleClass="@next"
+                                    enterFromClass="hidden"
+                                    enterActiveClass="animate-slidedown"
+                                    leaveToClass="hidden"
+                                    leaveActiveClass="animate-slideup"
+                                    class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple"
+                                >
                                     <i class="pi pi-chart-line mr-2"></i>
-                                    <span class="font-medium">Expenses</span>
+                                    <span class="font-medium">Operaciones inventario</span>
+                                    <i class="pi pi-chevron-down ml-auto"></i>
                                 </a>
+                                <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                                    <li>
+                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                            <i class="pi pi-table mr-2"></i>
+                                            <span class="font-medium">View</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                            <i class="pi pi-search mr-2"></i>
+                                            <span class="font-medium">Search</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     </li>
                     <li>
-                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-users mr-2"></i>
-                            <span class="font-medium">Team</span>
+                        <a
+                            pRipple
+                            pStyleClass="@next"
+                            enterFromClass="hidden"
+                            enterActiveClass="animate-slidedown"
+                            leaveToClass="hidden"
+                            leaveActiveClass="animate-slideup"
+                            class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple"
+                        >
+                            <i class="pi pi-chart-line mr-2"></i>
+                            <span class="font-medium">Comercial</span>
+                            <i class="pi pi-chevron-down ml-auto"></i>
                         </a>
+                        <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                            <li>
+                                <a
+                                    pRipple
+                                    pStyleClass="@next"
+                                    enterFromClass="hidden"
+                                    enterActiveClass="animate-slidedown"
+                                    leaveToClass="hidden"
+                                    leaveActiveClass="animate-slideup"
+                                    class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple"
+                                >
+                                    <i class="pi pi-chart-line mr-2"></i>
+                                    <span class="font-medium">Gestión compras</span>
+                                    <i class="pi pi-chevron-down ml-auto"></i>
+                                </a>
+                                <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                                    <li>
+                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                            <i class="pi pi-table mr-2"></i>
+                                            <span class="font-medium">View</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                            <i class="pi pi-search mr-2"></i>
+                                            <span class="font-medium">Search</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a
+                                    pRipple
+                                    pStyleClass="@next"
+                                    enterFromClass="hidden"
+                                    enterActiveClass="animate-slidedown"
+                                    leaveToClass="hidden"
+                                    leaveActiveClass="animate-slideup"
+                                    class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple"
+                                >
+                                    <i class="pi pi-chart-line mr-2"></i>
+                                    <span class="font-medium">Gestión ventas</span>
+                                    <i class="pi pi-chevron-down ml-auto"></i>
+                                </a>
+                                <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                                    <li>
+                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                            <i class="pi pi-table mr-2"></i>
+                                            <span class="font-medium">View</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                            <i class="pi pi-search mr-2"></i>
+                                            <span class="font-medium">Search</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
                     </li>
                     <li>
-                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-comments mr-2"></i>
-                            <span class="font-medium">Messages</span>
-                            <span class="inline-flex items-center justify-center ml-auto bg-primary text-primary-contrast rounded-full" style="min-width: 1.5rem; height: 1.5rem">3</span>
+                        <a
+                            pRipple
+                            pStyleClass="@next"
+                            enterFromClass="hidden"
+                            enterActiveClass="animate-slidedown"
+                            leaveToClass="hidden"
+                            leaveActiveClass="animate-slideup"
+                            class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple"
+                        >
+                            <i class="pi pi-chart-line mr-2"></i>
+                            <span class="font-medium">Gestión Reportes</span>
+                            <i class="pi pi-chevron-down ml-auto"></i>
                         </a>
-                    </li>
-                    <li>
-                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-calendar mr-2"></i>
-                            <span class="font-medium">Calendar</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-cog mr-2"></i>
-                            <span class="font-medium">Settings</span>
-                        </a>
+                        <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                            <li>
+                                <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                    <i class="pi pi-table mr-2"></i>
+                                    <span class="font-medium">View</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                    <i class="pi pi-search mr-2"></i>
+                                    <span class="font-medium">Search</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </li>
@@ -189,22 +285,33 @@
                 </div>
                 <ul class="list-none p-0 m-0 overflow-hidden">
                     <li>
-                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-folder mr-2"></i>
-                            <span class="font-medium">Projects</span>
+                        <a
+                            pRipple
+                            pStyleClass="@next"
+                            enterFromClass="hidden"
+                            enterActiveClass="animate-slidedown"
+                            leaveToClass="hidden"
+                            leaveActiveClass="animate-slideup"
+                            class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple"
+                        >
+                            <i class="pi pi-chart-line mr-2"></i>
+                            <span class="font-medium">Gestión usuarios</span>
+                            <i class="pi pi-chevron-down ml-auto"></i>
                         </a>
-                    </li>
-                    <li>
-                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-chart-bar mr-2"></i>
-                            <span class="font-medium">Performance</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                            <i class="pi pi-cog mr-2"></i>
-                            <span class="font-medium">Settings</span>
-                        </a>
+                        <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
+                            <li>
+                                <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                    <i class="pi pi-table mr-2"></i>
+                                    <span class="font-medium">View</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                    <i class="pi pi-search mr-2"></i>
+                                    <span class="font-medium">Search</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </li>

@@ -19,9 +19,9 @@ import { StyleClassModule } from 'primeng/styleclass';
 })
 export class MenuComponent {
   @Input() isOverlay: boolean = false;
-  @Output() close = new EventEmitter<void>();
+  @Output() shouldClose = new EventEmitter<void>();
 
   closeMenu() {
-    this.close.emit();
+    this.shouldClose.emit();
   }
 }

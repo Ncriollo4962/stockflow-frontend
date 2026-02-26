@@ -16,11 +16,10 @@ import { TopbarComponent } from '../../topbar/topbar.component';
     ConfigPanelComponent,
   ],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.scss',
 })
 export class MainLayoutComponent {
   @ViewChild('themePopover') themePopover!: ConfigPanelComponent;
-  private themeService = inject(ThemeService);
+  private readonly themeService = inject(ThemeService);
 
   isDarkMode = this.themeService.isDarkMode;
   menuMode: 'static' | 'overlay' = 'static';
