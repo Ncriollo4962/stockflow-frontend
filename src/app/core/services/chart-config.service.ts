@@ -16,21 +16,35 @@ export class ChartConfigService {
   });
 
   readonly colors = [
-    '#3B82F6', // Blue: Confianza, estabilidad
-    '#10B981', // Emerald: Crecimiento, éxito
-    '#6366F1', // Indigo: Profundidad, inteligencia
-    '#F59E0B', // Amber: Atención, dinamismo
-    '#EC4899', // Pink: Innovación, energía
-    '#8B5CF6', // Violet: Creatividad, premium
-    '#14B8A6', // Teal: Frescura, renovación
-    '#F43F5E', // Rose: Urgencia, pasión
-    '#64748B', // Slate: Neutralidad, equilibrio
-    '#06B6D4', // Cyan: Claridad, tecnología
-    '#84CC16', // Lime: Naturaleza, vivacidad
-    '#D946EF', // Fuchsia: Modernidad
-    '#F97316', // Orange: Entusiasmo
-    '#0EA5E9', // Sky: Transparencia
-    '#A855F7', // Purple: Lujo
+    // Paleta Corporativa Principal (Tonos profundos y seguros)
+    '#1E40AF', // Deep Blue: Confianza, autoridad (Índice 0)
+    '#059669', // Emerald Green: Crecimiento, estabilidad financiera (Índice 1)
+    '#B91C1C', // Deep Red: Alerta crítica, gastos (Índice 2)
+    '#D97706', // Amber: Precaución, atención (Índice 3)
+    '#4F46E5', // Indigo: Innovación tecnológica (Índice 4)
+    // Paleta Secundaria (Tonos complementarios para diferenciación)
+    '#0891B2', // Cyan: Claridad, flujo (Índice 5)
+    '#7C3AED', // Violet: Premium, exclusividad (Índice 6)
+    '#BE185D', // Pink: Energía controlada (Índice 7)
+    '#EA580C', // Orange: Dinamismo (Índice 8)
+    '#0D9488', // Teal: Frescura profesional (Índice 9)
+    // Paleta Terciaria (Tonos neutros y de soporte)
+    '#475569', // Slate: Neutralidad, datos históricos (Índice 10)
+    '#65A30D', // Lime: Naturaleza, sostenibilidad (Índice 11)
+    '#9333EA', // Purple: Creatividad (Índice 12)
+    '#2563EB', // Royal Blue: Énfasis secundario (Índice 13)
+    '#DC2626', // Red: Urgencia (Índice 14)
+    // Paleta Extendida (Para gráficos con muchas categorías)
+    '#0284C7', // Sky Blue (Índice 15)
+    '#7E22CE', // Dark Purple (Índice 16)
+    '#C026D3', // Fuchsia (Índice 17)
+    '#CA8A04', // Dark Yellow (Índice 18)
+    '#166534', // Green Forest (Índice 19)
+    '#9F1239', // Rose (Índice 20)
+    '#1E293B', // Dark Slate (Índice 21)
+    '#374151', // Gray (Índice 22)
+    '#57534E', // Stone (Índice 23)
+    '#115E59', // Dark Teal (Índice 24)
   ];
 
   /**
@@ -63,6 +77,7 @@ export class ChartConfigService {
     const baseDataset: any = {
       label: config.label,
       data: config.data,
+      type: config.type,
       borderWidth: 1,
       ...config.moreOptions,
     };
@@ -74,9 +89,16 @@ export class ChartConfigService {
       config.type === 'doughnut'
     ) {
       // Colores distribuidos (uno por punto de datos)
-      baseDataset.backgroundColor = this.colors;
-      baseDataset.borderColor = this.colors.map((c) => c); // Opcional: bordes iguales al fondo
-      baseDataset.hoverBackgroundColor = this.colors.map((c) => `${c}CC`);
+      // Rotar el array de colores según el índice para variar el inicio
+      const startIndex = idx % this.colors.length;
+      const rotatedColors = [
+        ...this.colors.slice(startIndex),
+        ...this.colors.slice(0, startIndex),
+      ];
+
+      baseDataset.backgroundColor = rotatedColors;
+      baseDataset.borderColor = rotatedColors; // Opcional: bordes iguales al fondo
+      baseDataset.hoverBackgroundColor = rotatedColors.map((c) => `${c}CC`);
     } else if (config.type === 'line') {
       // Color único para  el dataset (serie) - Línea
       baseDataset.borderColor = singleColor;
@@ -152,8 +174,8 @@ export class ChartConfigService {
       const overrideScales = overrides.scales || {};
 
       mergedOptions.scales = {
-        x: { ...(baseScales.x || {}), ...(overrideScales.x || {}) },
-        y: { ...(baseScales.y || {}), ...(overrideScales.y || {}) },
+        x: { ...baseScales.x, ...overrideScales.x },
+        y: { ...baseScales.y, ...overrideScales.y },
       };
     }
 

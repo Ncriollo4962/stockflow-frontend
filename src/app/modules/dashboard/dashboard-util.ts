@@ -6,7 +6,7 @@ import { ChartConfigService } from '../../core/services/chart-config.service';
  * Se extrae aquí para mantener el componente limpio.
  */
 export function createDashboardOptions(chartConfigService: ChartConfigService) {
-  const lineOptions = computed(() =>
+  const barLineOptions = computed(() =>
     chartConfigService.getOptions('line', {
       plugins: {
         legend: {
@@ -52,7 +52,7 @@ export function createDashboardOptions(chartConfigService: ChartConfigService) {
         },
         title: {
           display: true,
-          text: 'Top 10 Productos con Mayor Rotación (Salidas)',
+          text: 'Top 10 Productos con Mayor Rotación',
         },
       },
       scales: {
@@ -72,6 +72,21 @@ export function createDashboardOptions(chartConfigService: ChartConfigService) {
         legend: {
           position: 'left',
         },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const label = context.label || '';
+              const value = context.raw || 0;
+              const dataset = context.dataset;
+              const total = dataset.data.reduce(
+                (acc: number, curr: number) => acc + curr,
+                0,
+              );
+              const percentage = ((value / total) * 100).toFixed(1) + '%';
+              return `${label}: ${value.toLocaleString()} (${percentage})`;
+            },
+          },
+        },
         title: {
           display: true,
           text: 'Valorización del Inventario por Categoría',
@@ -81,7 +96,7 @@ export function createDashboardOptions(chartConfigService: ChartConfigService) {
   );
 
   return {
-    lineOptions,
+    lineOptions: barLineOptions,
     barVerticalOptions: barVerticalOptions,
     barHorizontalOptions: barHorizontalOptions,
     doughnutOptions,

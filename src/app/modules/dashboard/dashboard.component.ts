@@ -1,8 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, Signal } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { ChartConfigService } from '../../core/services/chart-config.service';
 import { ImportsModule } from '../../imports';
 import { createDashboardOptions } from './dashboard-util';
+import { DashboardService } from '../../core/services/dashboard.service';
+import { rxResource } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,101 +12,164 @@ import { createDashboardOptions } from './dashboard-util';
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
-  chartDataEvolucionComprasVentas: any;
-  chartDataMovimientosInventario: any;
-  chartDataTop10Productos: any;
-  chartDataValorizacionInventarioPorCateg: any;
+  chartDataEvolucionComprasVentas!: Signal<any>;
+  chartDataMovimientosInventario!: Signal<any>;
+  chartDataTop10Productos!: Signal<any>;
+  chartDataValorizacionInventarioPorCateg!: Signal<any>;
   productosRecientes: any[] = [];
+  year = new Date().getFullYear();
 
   private readonly chartConfigService = inject(ChartConfigService);
+  private readonly dashboardService = inject(DashboardService);
 
   private readonly options = createDashboardOptions(this.chartConfigService);
-  lineOptions = this.options.lineOptions;
+  barLineOptions = this.options.lineOptions;
   barVerticalOptions = this.options.barVerticalOptions;
   doughnutOptions = this.options.doughnutOptions;
   barHorizontalOptions = this.options.barHorizontalOptions;
 
+  countProductsRx = rxResource({
+    loader: () => this.dashboardService.countProducts(),
+  });
+
+  countProductsCriticalStockRx = rxResource({
+    loader: () => this.dashboardService.countProductsCriticalStock(),
+  });
+
+  countOrdenVentaPendienteDespachoRx = rxResource({
+    loader: () => this.dashboardService.countOrdenVentaPendienteDespacho(),
+  });
+
+  countOrdenCompraPendienteRecepcionRx = rxResource({
+    loader: () => this.dashboardService.countOrdenCompraPendienteRecepcion(),
+  });
+
+  chartMovimientosRx = rxResource({
+    request: () => this.year,
+    loader: ({ request }) => this.dashboardService.chartMovimientos(request),
+  });
+
+  chartComprasVentasRx = rxResource({
+    request: () => this.year,
+    loader: ({ request }) => this.dashboardService.chartComprasVentas(request),
+  });
+
+  chartTopProductosSalidasRx = rxResource({
+    request: () => this.year,
+    loader: ({ request }) =>
+      this.dashboardService.chartTopProductosSalidas(request),
+  });
+
+  chartValorizacionInventarioPorCategRx = rxResource({
+    loader: () =>
+      this.dashboardService.chartValorizacionInventarioPorCategoria(),
+  });
+
   ngOnInit() {
-    this.chartDataEvolucionComprasVentas = this.chartConfigService.createData(
-      ['Ene', 'Feb', 'Mar', 'Abr', 'May'],
-      [
-        this.chartConfigService.createDataset({
-          label: 'Ventas (Saldo Neto)',
-          data: [65, 59, 80, 120, 150],
-          type: 'line',
-          colorIndex: 0,
-        }),
-        this.chartConfigService.createDataset({
-          label: 'Compras (Saldo Neto)',
-          data: [50, 36, 85, 120, 170],
-          type: 'line',
-          colorIndex: 1,
-        }),
-      ],
-    );
+    this.chartDataEvolucionComprasVentas = computed(() => {
+      const data = this.chartComprasVentasRx.value();
+      if (!data?.datasets || data.datasets.length < 3) return {};
 
-    this.chartDataMovimientosInventario = this.chartConfigService.createData(
-      ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-      [
-        this.chartConfigService.createDataset({
-          label: 'Entradas (CUS11)',
-          data: [65, 59, 80, 120, 150, 180],
-          type: 'bar',
-          colorIndex: 0,
-          fill: true,
-        }),
-        this.chartConfigService.createDataset({
-          label: 'Salidas (CUS14)',
-          data: [28, 48, 40, 120, 150, 200],
-          type: 'bar',
-          colorIndex: 7,
-        }),
-      ],
-    );
+      // Identificar datasets (por label o índice)
+      const comprasRaw =
+        data.datasets.find((d: any) =>
+          d.label.toLowerCase().includes('compras'),
+        ) || data.datasets[0];
 
-    this.chartDataTop10Productos = this.chartConfigService.createData(
-      [
-        'Top 1',
-        'Top 2',
-        'Top 3',
-        'Top 4',
-        'Top 5',
-        'Top 6',
-        'Top 7',
-        'Top 8',
-        'Top 9',
-        'Top 10',
-      ],
-      [
+      const ventasRaw =
+        data.datasets.find((d: any) =>
+          d.label.toLowerCase().includes('ventas'),
+        ) || data.datasets[1];
+
+      const saldoRaw =
+        data.datasets.find((d: any) =>
+          d.label.toLowerCase().includes('saldo'),
+        ) || data.datasets[2];
+
+      const datasets = [
         this.chartConfigService.createDataset({
-          label: 'Top 10 Productos',
-          data: [65, 59, 80, 120, 150, 180, 200, 110, 90, 70],
+          label: comprasRaw.label,
+          data: comprasRaw.data,
+          type: 'bar',
+          colorIndex: 9,
+          fill: false,
+        }),
+        this.chartConfigService.createDataset({
+          label: ventasRaw.label,
+          data: ventasRaw.data,
           type: 'bar',
           colorIndex: 11,
           fill: false,
         }),
-      ],
-    );
+        this.chartConfigService.createDataset({
+          label: saldoRaw.label,
+          data: saldoRaw.data,
+          type: 'line',
+          colorIndex: 3,
+          fill: false,
+          moreOptions: {
+            tension: 0.4,
+            borderDash: [5, 5],
+            order: 0,
+          },
+        }),
+      ];
 
-    this.chartDataValorizacionInventarioPorCateg =
-      this.chartConfigService.createData(
-        [
-          'Herramientas',
-          'Materiales',
-          'Equipos',
-          'Accesorios',
-          'Muebles',
-          'Oficina',
-          'Cerraduras',
-          'Otro',
-        ],
-        [
+      return this.chartConfigService.createData(data.labels, datasets);
+    });
+
+    this.chartDataMovimientosInventario = computed(() => {
+      const data = this.chartMovimientosRx.value();
+      if (!data) return {};
+
+      return this.chartConfigService.createData(
+        data.labels,
+        data.datasets.map((dataset: any, index: number) =>
           this.chartConfigService.createDataset({
-            label: 'Categoría',
-            data: [65, 59, 80, 120, 150, 180, 200, 110],
-            type: 'doughnut',
+            label: dataset.label,
+            data: dataset.data,
+            type: 'bar',
+            colorIndex: index === 0 ? 0 : 7,
+            fill: true,
           }),
-        ],
+        ),
       );
+    });
+
+    this.chartDataTop10Productos = computed(() => {
+      const data = this.chartTopProductosSalidasRx.value();
+      if (!data) return {};
+
+      return this.chartConfigService.createData(
+        data.labels,
+        data.datasets.map((dataset: any, index: number) =>
+          this.chartConfigService.createDataset({
+            label: dataset.label,
+            data: dataset.data,
+            type: 'bar',
+            colorIndex: index + 5,
+            fill: true,
+          }),
+        ),
+      );
+    });
+
+    this.chartDataValorizacionInventarioPorCateg = computed(() => {
+      const data = this.chartValorizacionInventarioPorCategRx.value();
+      if (!data) return {};
+
+      return this.chartConfigService.createData(
+        data.labels,
+        data.datasets.map((dataset: any, index: number) =>
+          this.chartConfigService.createDataset({
+            label: dataset.label,
+            data: dataset.data,
+            type: 'doughnut',
+            colorIndex: index + 10,
+            fill: true,
+          }),
+        ),
+      );
+    });
   }
 }
