@@ -1,1 +1,109 @@
-<p>compras works!</p>
+<div class="card shadow-sm text-text-main h-full px-6 py-4">
+    <p-table
+        #dt
+        [value]="ordenesCompra"
+        [rows]="10"
+        [columns]="cols"
+        [paginator]="true"
+        [globalFilterFields]="['numeroOrden', 'proveedor.nombre', 'fechaOrdenCompra', 'estado']"
+        [tableStyle]="{ 'min-width': '75rem' }"
+        [(selection)]="selectedOrdenes"
+        [rowHover]="true"
+        dataKey="id"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} órdenes"
+        [showCurrentPageReport]="true"
+    >
+        <ng-template #caption>
+            <div class="flex items-center justify-between">
+                <div #start>
+                    <p-button
+                        label="Nueva Orden"
+                        icon="pi pi-plus"
+                        class="mr-2"
+                        (onClick)="openNew()" />
+                  <p-button
+                        severity="danger"
+                        label="Delete"
+                        icon="pi pi-trash"
+                        outlined
+                        (onClick)="deleteSelectedOrdenes($event)"
+                        [disabled]="!selectedOrdenes || !selectedOrdenes.length" />
+                </div>
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input
+                        pInputText
+                        type="text"
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Buscar..." />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="width: 3rem" scope="col">
+                    <p-tableHeaderCheckbox />
+                </th>
+                <th pSortableColumn="numeroOrden" style="min-width:12rem" scope="col">
+                    Número Orden
+                    <p-sortIcon field="numeroOrden" />
+                </th>
+                <th pSortableColumn="proveedor.nombre" style="min-width:16rem" scope="col">
+                    Proveedor
+                    <p-sortIcon field="proveedor.nombre" />
+                </th>
+                <th pSortableColumn="fechaOrdenCompra" style="min-width: 10rem" scope="col">
+                    Fecha Emisión
+                    <p-sortIcon field="fechaOrdenCompra" />
+                </th>
+                <th pSortableColumn="fechaEntrega" style="min-width: 10rem" scope="col">
+                    Fecha Entrega
+                    <p-sortIcon field="fechaEntrega" />
+                </th>
+                <th pSortableColumn="totalCompra" style="min-width: 10rem" scope="col">
+                    Total
+                    <p-sortIcon field="totalCompra" />
+                </th>
+                <th pSortableColumn="estado" style="min-width: 10rem" scope="col">
+                    Estado
+                    <p-sortIcon field="estado" />
+                </th>
+                <th style="min-width: 10rem" scope="col">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-orden>
+            <tr>
+                <td style="width: 3rem">
+                    <p-tableCheckbox [value]="orden" />
+                </td>
+                <td>{{ orden.numeroOrden }}</td>
+                <td>{{ orden.proveedor?.nombre }}</td>
+                <td>{{ orden.fechaOrdenCompra | date:'dd/MM/yyyy' }}</td>
+                <td>{{ orden.fechaEntrega | date:'dd/MM/yyyy' }}</td>
+                <td>{{ orden.totalCompra | currency: 'PEN':'S/ ' }}</td>
+                <td>
+                    <p-tag [value]="orden.estado" [severity]="orden.estado === 'APROBADA' ? 'success' : (orden.estado === 'PENDIENTE' ? 'warn' : 'danger')" />
+                </td>
+                <td>
+                    <p-button
+                        icon="pi pi-pencil"
+                        class="mr-2"
+                        [rounded]="true"
+                        [outlined]="true"
+                        (onClick)="editOrden(orden)" />
+                    <p-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        [rounded]="true"
+                        [outlined]="true"
+                        (onClick)="deleteOrden(orden)" />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #summary>
+            <div class="flex items-center justify-between">Total: {{ ordenesCompra ? ordenesCompra.length : 0 }} órdenes.</div>
+        </ng-template>
+    </p-table>
+
+    <p-confirmDialog [style]="{ width: '450px' }" />
+</div>

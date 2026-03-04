@@ -1,0 +1,78 @@
+<div class="card p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
+  <h2 class="text-2xl font-bold mb-1 text-text-main text-center">Registro de Orden de Compra</h2>
+
+  <form [formGroup]="form" class="grid grid-cols-1 px-6">
+      <p-fieldset legend="Datos de la Orden">
+        <div class="card grid grid-cols-4 md:grid-cols-2 lg:grid-cols-3 gap-4 px-6 py-4">
+          <div class="flex flex-col gap-2">
+            <label for="numeroOrden" class="font-semibold text-text-main">Número de Orden</label>
+            <input pInputText type="text" #numeroOrden formControlName="numeroOrden"
+                  placeholder="Ej: OC-2026-001" class="w-full h-11 input-custom-border" />
+          </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="estado" class="font-semibold text-text-main">Estado</label>
+          <p-select #estado formControlName="estado"
+                    [options]="estadosOrden" placeholder="Seleccione un estado"
+                    [fluid]="true" styleClass="h-11 flex items-center input-custom-border"></p-select>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="proveedor" class="font-semibold text-text-main">Proveedor</label>
+          <p-select #proveedor formControlName="proveedor"
+                    [options]="proveedores()" optionLabel="nombre"
+                    [filter]="true" placeholder="Buscar proveedor"
+                    [fluid]="true" styleClass="h-11 flex items-center input-custom-border"></p-select>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="fechaCompra" class="font-semibold text-text-main">Fecha de Compra</label>
+          <p-datepicker #fechaCompra formControlName="fechaOrdenCompra"
+                        [showIcon]="true" [fluid]="true" styleClass="h-11"
+                        inputStyleClass="h-11 input-custom-border"></p-datepicker>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="fechaEntrega" class="font-semibold text-text-main">Fecha de Entrega Estimada</label>
+          <p-datepicker #fechaEntrega formControlName="fechaEntrega"
+                        [showIcon]="true" [fluid]="true" styleClass="h-11"
+                        inputStyleClass="h-11 input-custom-border"></p-datepicker>
+        </div>
+
+        <div class="flex flex-col gap-2 text-text-body">
+          <label for="fechaCreacion" class="font-semibold text-text-main">Fecha Creación</label>
+          <p class="p-2 border-1 border-surface-200 dark:border-surface-700 border-round bg-surface-50 dark:bg-surface-800 text-text-body">
+            {{ (form.get('fechaCreacion')?.value | date:'short') || 'Pendiente de guardado' }}
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="totalCompra" class="font-semibold text-text-main">Total de la Compra</label>
+          <p-inputnumber #totalCompra formControlName="totalCompra"
+                        mode="currency" currency="PEN" locale="es-PE"
+                        [fluid]="true" inputStyleClass="h-11 input-custom-border"></p-inputnumber>
+        </div>
+
+        <div class="flex flex-col gap-2 md:col-span-2 lg:col-span-2">
+          <label for="notas" class="font-semibold text-text-main">Notas Adicionales</label>
+          <textarea pTextarea #notas formControlName="notas"
+                    rows="3" [autoResize]="false" class="w-full input-custom-border"></textarea>
+        </div>
+      </div>
+      </p-fieldset>
+
+      <div class="flex flex-col gap-3 md:col-span-3 lg:col-span-3">
+          <p-fieldset legend="Detalles de la Orden">
+        <div class="grid grid-cols-1">
+          <app-detalle-orden-compra (totalCalculado)="actualizarTotalCompra($event)"></app-detalle-orden-compra>
+        </div>
+        </p-fieldset>
+      </div>
+
+    <div class="md:col-span-2 lg:col-span-3 flex justify-end gap-2 mt-3">
+      <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [outlined]="true" (onClick)="cancelarOrden()"></p-button>
+      <p-button [disabled]="btnSaveDisabled" label="Guardar Orden" icon="pi pi-check" severity="primary" (onClick)="guardarOrden()"></p-button>
+    </div>
+
+  </form>
+</div>

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { MainLayoutComponent } from './shared/components/layout/main-layout/main-layout.component';
 import { RoleGuardCanMatch } from '../core/auth/guards/role.guard';
+import { MainLayoutComponent } from './shared/components/layout/main-layout/main-layout.component';
 
 export const modulesRoutes: Routes = [
   {
@@ -23,8 +23,10 @@ export const modulesRoutes: Routes = [
       },
       {
         path: 'compras',
-        loadComponent: () =>
-          import('./compras/compras.component').then((m) => m.ComprasComponent),
+        loadChildren: () =>
+          import('./compras/compras.routes').then(
+            (m) => m.comprasModulesRoutes,
+          ),
       },
       {
         path: 'ventas',

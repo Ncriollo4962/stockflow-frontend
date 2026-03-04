@@ -1,8 +1,15 @@
-@use "tailwindcss/base";
-@use "tailwindcss/components";
-@use "tailwindcss/utilities";
+@layer tailwind-base, primeng, tailwind-utilities;
 
-@use "primeicons/primeicons.css";
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+@import "primeicons/primeicons.css";
 
 :root {
   --body-bg: var(--p-surface-50);
@@ -19,7 +26,7 @@
   --body-text-color: var(--p-surface-50);
   --card-border: 1px solid transparent;
   --card-bg: var(--p-surface-900);
-  --border-color: rgba(255, 255, 255, 0.1);
+  --border-color: var(--p-surface-700);
   --text-color: var(--p-surface-0);
   --overlay-background: var(--p-surface-900);
 }
@@ -41,10 +48,33 @@ body {
     color 0.3s;
 }
 
-.card {
-  background: var(--card-bg);
-  border: var(--card-border);
-  padding: 2rem;
-  border-radius: 10px;
-  margin-bottom: 1rem;
+@layer tailwind-base {
+  .card {
+    background: var(--card-bg);
+    border: var(--card-border);
+    padding: 2rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+  }
+}
+
+@layer tailwind-utilities {
+  .input-custom-border {
+    border-width: 1px;
+    border-style: solid;
+    padding: 0.5rem 1rem;
+    border-color: #d1d5db; /* gray-300 */
+
+    &:hover {
+      border-color: #38bdf8; /* sky-400 */
+    }
+  }
+}
+
+:root[class="my-app-dark"] .input-custom-border {
+  border-color: #ffffff; /* white */
+
+  &:hover {
+    border-color: #38bdf8; /* sky-400 */
+  }
 }
