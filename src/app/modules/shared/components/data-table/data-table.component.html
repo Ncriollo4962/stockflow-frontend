@@ -1,0 +1,97 @@
+<div class="card shadow-sm text-text-main h-full px-6 py-4">
+    <p-table
+        #dt
+        [value]="data"
+        [rows]="rows"
+        [columns]="cols"
+        [paginator]="paginator"
+        [globalFilterFields]="globalFilterFields"
+        [tableStyle]="{ 'min-width': '75rem' }"
+        [(selection)]="selection"
+        (selectionChange)="onSelectionChange($event)"
+        [rowHover]="true"
+        [dataKey]="dataKey"
+        [currentPageReportTemplate]="currentPageReportTemplate"
+        [showCurrentPageReport]="showCurrentPageReport"
+        [loading]="loading"
+    >
+        <ng-template #caption>
+            <div class="flex items-center justify-between">
+                <div #start>
+                    <p-button
+                        label="Nuevo"
+                        icon="pi pi-plus"
+                        class="mr-2"
+                        (onClick)="shouldonCreate.emit()" />
+                    <p-button
+                        severity="danger"
+                        label="Eliminar"
+                        icon="pi pi-trash"
+                        outlined
+                        (onClick)="deleteSelected()"
+                        [disabled]="!selection || !selection.length" />
+                </div>
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input
+                        pInputText
+                        type="text"
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Buscar..." />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="width: 3rem" scope="col">
+                    <p-tableHeaderCheckbox />
+                </th>
+                <th *ngFor="let col of cols" [pSortableColumn]="col.field" style="min-width: 10rem" scope="col">
+                    {{ col.header }}
+                    <p-sortIcon [field]="col.field" />
+                </th>
+                <th style="min-width: 12rem" scope="col">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-rowData>
+            <tr>
+                <td style="width: 3rem">
+                    <p-tableCheckbox [value]="rowData" />
+                </td>
+                <td *ngFor="let col of cols">
+                    <ng-container [ngSwitch]="col.type">
+                        <span *ngSwitchCase="'currency'">
+                            {{ getFieldValue(rowData, col.field) | currency: 'PEN':'S/ ' }}
+                        </span>
+                        <span *ngSwitchCase="'date'">
+                             {{ getFieldValue(rowData, col.field) | date: 'dd/MM/yyyy' }}
+                        </span>
+                        <span *ngSwitchCase="'tag'">
+                             <p-tag [value]="getFieldValue(rowData, col.field)" [severity]="col.tagSeverity ? col.tagSeverity(getFieldValue(rowData, col.field)) : undefined" />
+                        </span>
+                        <span *ngSwitchDefault>
+                            {{ getFieldValue(rowData, col.field) }}
+                        </span>
+                    </ng-container>
+                </td>
+                <td>
+                    <p-button
+                        icon="pi pi-pencil"
+                        class="mr-2"
+                        [rounded]="true"
+                        [outlined]="true"
+                        (onClick)="shouldonEdit.emit(rowData)" />
+                    <p-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        [rounded]="true"
+                        [outlined]="true"
+                        (onClick)="shouldonDelete.emit(rowData)" />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #summary>
+            <div class="flex items-center justify-between">Total: {{ data ? data.length : 0 }} registros.</div>
+        </ng-template>
+    </p-table>
+</div>

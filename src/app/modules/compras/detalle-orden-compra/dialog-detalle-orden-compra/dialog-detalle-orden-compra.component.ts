@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  OnInit,
+  output,
+  Signal,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Select } from 'primeng/select';
@@ -6,6 +13,8 @@ import { Categoria } from '../../../../core/models/Categoria';
 import { DetalleOrdenCompra } from '../../../../core/models/DetalleOrdenCompra';
 import { Producto } from '../../../../core/models/Producto';
 import { ImportsModule } from '../../../../imports';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { ProductoService } from '../../../../core/services/producto.service';
 
 @Component({
   selector: 'app-dialog-detalle-orden-compra',
@@ -16,95 +25,24 @@ export class DialogDetalleOrdenCompraComponent implements OnInit {
   shouldNewDetalle = output<DetalleOrdenCompra>();
 
   productDialog: boolean = false;
-  products!: Producto[];
+  products!: Signal<Producto[]>;
   product!: Producto;
   selectedProducts!: Producto[] | null;
   submitted: boolean = false;
   statuses!: any[];
   detalle!: DetalleOrdenCompra;
+  detalleForm!: FormGroup;
 
   private readonly fb = inject(FormBuilder);
-  private readonly messageService = inject(MessageService);
-  private readonly confirmationService = inject(ConfirmationService);
-
-  public detalleForm!: FormGroup;
+  private readonly productService = inject(ProductoService);
 
   ngOnInit() {
     this.initForm();
-    this.products = [
-      {
-        id: 1,
-        codigo: 'LAPGAM123',
-        nombre: 'Laptop Gamer',
-        descripcion: 'Laptop con GPU dedicada para juegos',
-        precioCosto: 1200,
-        precioVenta: 1500,
-        cantidadMinima: 10,
-        estado: true,
-        version: 1,
-        categoria: {
-          id: 1,
-          nombre: 'Electrónica',
-          descripcion: 'Equipos electrónicos',
-          estado: true,
-          version: 1,
-        } as Categoria,
-      },
-      {
-        id: 2,
-        codigo: 'MOUSEIN123',
-        nombre: 'Mouse Inalámbrico',
-        descripcion: 'Mouse inalámbrico para juegos',
-        precioCosto: 20,
-        precioVenta: 25,
-        cantidadMinima: 20,
-        estado: true,
-        version: 1,
-        categoria: {
-          id: 1,
-          nombre: 'Electrónica',
-          descripcion: 'Equipos electrónicos',
-          estado: true,
-          version: 1,
-        } as Categoria,
-      },
-      {
-        id: 3,
-        codigo: 'KEYMEC123',
-        nombre: 'Teclado Mecánico',
-        descripcion: 'Teclado mecánico para escritorio',
-        precioCosto: 40,
-        precioVenta: 80,
-        cantidadMinima: 30,
-        estado: true,
-        version: 1,
-        categoria: {
-          id: 1,
-          nombre: 'Electrónica',
-          descripcion: 'Equipos electrónicos',
-          estado: true,
-          version: 1,
-        } as Categoria,
-      },
-      {
-        id: 4,
-        codigo: 'MON24123',
-        nombre: 'Monitor 24"',
-        descripcion: 'Monitor de 24 pulgadas Full HD',
-        precioCosto: 150,
-        precioVenta: 200,
-        cantidadMinima: 15,
-        estado: true,
-        version: 1,
-        categoria: {
-          id: 1,
-          nombre: 'Electrónica',
-          descripcion: 'Equipos electrónicos',
-          estado: true,
-          version: 1,
-        } as Categoria,
-      },
-    ];
+
+    this.products = computed(() => {
+      return this.productsRx.value() || [];
+    });
+
     this.watchChanges();
   }
 
@@ -118,6 +56,10 @@ export class DialogDetalleOrdenCompraComponent implements OnInit {
       subtotal: [{ value: 0, disabled: true }], // Solo lectura
     });
   }
+
+  productsRx = rxResource({
+    loader: () => this.productService.getProductos(),
+  });
 
   private watchChanges() {
     this.detalleForm.valueChanges.subscribe((values) => {

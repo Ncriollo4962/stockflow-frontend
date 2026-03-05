@@ -1,103 +1,16 @@
 <div class="card shadow-sm text-text-main h-full px-6 py-4">
     <p-toast />
-    <p-table
-        #dt
-        [value]="detallesOrdenCompra"
-        [rows]="10"
-        [columns]="cols"
-        [paginator]="true"
-        [globalFilterFields]="['nroItemTemp', 'producto.nombre', 'cantidad', 'producto.precioUnitario', 'subtotal']"
-        [tableStyle]="{ 'min-width': '75rem' }"
+    <app-data-table
+        [data]="detallesOrdenCompra"
+        [cols]="cols"
         [(selection)]="selectedDetallesOc"
-        [rowHover]="true"
+        [globalFilterFields]="globalFilterFields"
         dataKey="nroItemTemp"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [showCurrentPageReport]="true"
-    >
-        <ng-template #caption>
-            <div class="flex items-center justify-between">
-                <div #start>
-                    <p-button
-                        label="New"
-                        icon="pi pi-plus"
-                        class="mr-2"
-                        (onClick)="openNew()" />
-                    <p-button
-                        severity="danger"
-                        label="Delete"
-                        icon="pi pi-trash"
-                        outlined
-                        (onClick)="deleteAllProduct($event)"
-                        [disabled]="!selectedDetallesOc || !selectedDetallesOc.length" />
-                </div>
-                <p-iconfield>
-                    <p-inputicon styleClass="pi pi-search" />
-                    <input
-                        pInputText
-                        type="text"
-                        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                        placeholder="Search..." />
-                </p-iconfield>
-            </div>
-        </ng-template>
-        <ng-template #header>
-            <tr>
-                <th style="width: 3rem" scope="col">
-                    <p-tableHeaderCheckbox />
-                </th>
-                <th  pSortableColumn="nroItemTemp" style="min-width:16rem" scope="col">
-                    NroItem
-                    <p-sortIcon field="nroItemTemp" />
-                </th>
-                <th  pSortableColumn="producto.nombre" style="min-width:16rem" scope="col">
-                    Producto
-                    <p-sortIcon field="producto.nombre" />
-                </th>
-                <th pSortableColumn="cantidad" style="min-width: 8rem" scope="col">
-                    Cantidad
-                    <p-sortIcon field="cantidad" />
-                </th>
-                <th pSortableColumn="precioUnitario" style="min-width: 8rem" scope="col">
-                    Precio Unitario
-                    <p-sortIcon field="precioUnitario" />
-                </th>
-                <th pSortableColumn="subtotal" style="min-width: 10rem" scope="col">
-                    Subtotal
-                    <p-sortIcon field="subtotal" />
-                </th>
-                <th style="min-width: 12rem" scope="col">Acciones</th>
-            </tr>
-        </ng-template>
-        <ng-template #body let-detalleOrdenCompra>
-            <tr>
-                <td style="width: 3rem">
-                    <p-tableCheckbox [value]="detalleOrdenCompra" />
-                </td>
-                <td style="min-width: 12rem">{{ detalleOrdenCompra.nroItemTemp }}</td>
-                <td style="min-width: 16rem">{{ detalleOrdenCompra.producto.nombre }}</td>
-                <td>{{ detalleOrdenCompra.cantidad }}</td>
-                <td>{{ detalleOrdenCompra.precioUnitario | currency: 'PEN':'S/ ' }}</td>
-                <td>{{ detalleOrdenCompra.subtotal | currency: 'PEN':'S/ ' }}</td>
-                <td>
-                    <p-button
-                        icon="pi pi-pencil"
-                        class="mr-2"
-                        [rounded]="true"
-                        [outlined]="true"
-                        (onClick)="editProduct(detalleOrdenCompra)" />
-                    <p-button
-                        icon="pi pi-trash"
-                        severity="danger"
-                        [rounded]="true"
-                        [outlined]="true"
-                        (onClick)="deleteProduct(detalleOrdenCompra)" />
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template #summary>
-            <div class="flex items-center justify-between">In total there are {{ detallesOrdenCompra ? detallesOrdenCompra.length : 0 }} detalles.</div>
-        </ng-template>
-    </p-table>
+        (shouldonCreate)="openNew()"
+        (shouldonEdit)="editProduct($event)"
+        (shouldonDelete)="deleteProduct($event)"
+        (shouldonDeleteSelected)="deleteAllProduct($event)"
+    ></app-data-table>
 
     <p-confirmDialog [style]="{ width: '450px' }" />
 

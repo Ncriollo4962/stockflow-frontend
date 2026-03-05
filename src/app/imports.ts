@@ -103,6 +103,7 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DrawerModule } from 'primeng/drawer';
+import { EstadoOrdenSeverityPipe } from './modules/shared/pipes/estado-orden-severity.pipe';
 
 @NgModule({
   imports: [
@@ -210,6 +211,7 @@ import { DrawerModule } from 'primeng/drawer';
     InputIconModule,
     AutoFocusModule,
     OverlayBadgeModule,
+    EstadoOrdenSeverityPipe,
   ],
   exports: [
     TabsModule,
@@ -316,6 +318,7 @@ import { DrawerModule } from 'primeng/drawer';
     AutoFocusModule,
     OverlayBadgeModule,
     PopoverModule,
+    EstadoOrdenSeverityPipe,
   ],
   providers: [],
 })

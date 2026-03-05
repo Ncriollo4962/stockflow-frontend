@@ -1,15 +1,18 @@
-import { ChangeDetectorRef, Component, output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  output,
+  ViewChild,
+} from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Table } from 'primeng/table';
-import { ImportsModule } from '../../../imports';
-import { DialogDetalleOrdenCompraComponent } from './dialog-detalle-orden-compra/dialog-detalle-orden-compra.component';
 import { DetalleOrdenCompra } from '../../../core/models/DetalleOrdenCompra';
-
-interface Column {
-  field: string;
-  header: string;
-  customExportHeader?: string;
-}
+import { ImportsModule } from '../../../imports';
+import {
+  Column,
+  DataTableComponent,
+} from '../../shared/components/data-table/data-table.component';
+import { DialogDetalleOrdenCompraComponent } from './dialog-detalle-orden-compra/dialog-detalle-orden-compra.component';
 
 interface ExportColumn {
   title: string;
@@ -18,37 +21,42 @@ interface ExportColumn {
 
 @Component({
   selector: 'app-detalle-orden-compra',
-  imports: [ImportsModule, DialogDetalleOrdenCompraComponent],
+  imports: [
+    ImportsModule,
+    DialogDetalleOrdenCompraComponent,
+    DataTableComponent,
+  ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './detalle-orden-compra.component.html',
 })
-export class DetalleOrdenCompraComponent {
+export class DetalleOrdenCompraComponent implements OnInit {
+  @ViewChild(DataTableComponent) dataTableComponent!: DataTableComponent;
+  @ViewChild('dialogDetalle') dialogDetalle!: DialogDetalleOrdenCompraComponent;
+
   detalleOrdenCompraDialog: boolean = false;
 
   detallesOrdenCompra: DetalleOrdenCompra[] = [];
   detalleOrdenCompra!: DetalleOrdenCompra;
-  selectedDetallesOc!: DetalleOrdenCompra[] | null;
+  selectedDetallesOc: DetalleOrdenCompra[] | null = null;
   submitted: boolean = false;
-  statuses!: any[];
   nroItemTemp: number = 0;
 
-  @ViewChild('dt') dt!: Table;
-  @ViewChild('dialogDetalle') dialogDetalle!: DialogDetalleOrdenCompraComponent;
-
   totalCalculado = output<number>();
+  detallesChanged = output<void>();
 
   cols!: Column[];
 
   exportColumns!: ExportColumn[];
+  globalFilterFields!: string[];
 
   constructor(
-    private messageService: MessageService,
-    private confirmationService: ConfirmationService,
-    private cd: ChangeDetectorRef,
+    private readonly messageService: MessageService,
+    private readonly confirmationService: ConfirmationService,
+    private readonly cd: ChangeDetectorRef,
   ) {}
 
   exportCSV() {
-    this.dt.exportCSV();
+    this.dataTableComponent.dt?.exportCSV();
   }
 
   ngOnInit() {
@@ -56,32 +64,21 @@ export class DetalleOrdenCompraComponent {
   }
 
   loadDemoData() {
-    // this.productService.getProducts().then((data) => {
-    //   this.products = data;
-    //   this.cd.markForCheck();
-    // });
-
-    this.detallesOrdenCompra = [];
-    this.cd.markForCheck();
-
-    this.statuses = [
-      { label: 'INSTOCK', value: 'instock' },
-      { label: 'LOWSTOCK', value: 'lowstock' },
-      { label: 'OUTOFSTOCK', value: 'outofstock' },
-    ];
-
+    // Inicializamos las columnas dinámicas
     this.cols = [
       { field: 'nroItemTemp', header: 'NroItem' },
       { field: 'producto.nombre', header: 'Producto' },
       { field: 'cantidad', header: 'Cantidad' },
-      { field: 'precioUnitario', header: 'Precio Unitario' },
-      { field: 'subtotal', header: 'Subtotal' },
+      { field: 'precioUnitario', header: 'Precio Unitario', type: 'currency' },
+      { field: 'subtotal', header: 'Subtotal', type: 'currency' },
     ];
 
     this.exportColumns = this.cols.map((col) => ({
       title: col.header,
       dataKey: col.field,
     }));
+
+    this.globalFilterFields = this.cols.map((col) => col.field);
   }
 
   calcularNroItemTemp() {
@@ -162,16 +159,15 @@ export class DetalleOrdenCompraComponent {
     });
   }
 
-  deleteAllProduct(event: Event) {
-    event.stopPropagation();
-    console.log('deleteAllProduct', this.selectedDetallesOc);
+  deleteAllProduct(selection: DetalleOrdenCompra[]) {
+    console.log('deleteAllProduct', selection);
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete all products?',
       header: 'Confirm',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.detallesOrdenCompra = this.detallesOrdenCompra.filter(
-          (val) => !this.selectedDetallesOc?.includes(val),
+          (val) => !selection.includes(val),
         );
         this.detalleOrdenCompra = {} as DetalleOrdenCompra;
         this.messageService.add({
@@ -197,5 +193,6 @@ export class DetalleOrdenCompraComponent {
       0,
     );
     this.totalCalculado.emit(total);
+    this.detallesChanged.emit();
   }
 }

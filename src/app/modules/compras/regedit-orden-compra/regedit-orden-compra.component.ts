@@ -34,6 +34,8 @@ export class RegeditOrdenCompraComponent implements OnInit {
   form: FormGroup = {} as FormGroup;
   idOrdenCompra: number | null = null;
   editOrdenCompra: OrdenCompra = new OrdenCompra();
+  initialFormState: string = '{}';
+  initialDetallesState: string = '[]';
   @ViewChild(DetalleOrdenCompraComponent)
   detalleComponent!: DetalleOrdenCompraComponent;
 
@@ -65,6 +67,8 @@ export class RegeditOrdenCompraComponent implements OnInit {
       if (id) {
         this.idOrdenCompra = +id;
         this.loadOrdenCompra(this.idOrdenCompra);
+      } else {
+        this.generateNroOrden();
       }
     });
   }
@@ -74,8 +78,15 @@ export class RegeditOrdenCompraComponent implements OnInit {
       next: (orden) => {
         this.editOrdenCompra = orden;
         if (this.detalleComponent) {
-          this.detalleComponent.detallesOrdenCompra =
-            orden.detallesOrdenCompra || [];
+          const detalles = orden.detallesOrdenCompra || [];
+          detalles.forEach((detalle, index) => {
+            detalle.nroItemTemp = index + 1;
+          });
+          this.detalleComponent.detallesOrdenCompra = detalles;
+
+          this.initialDetallesState = JSON.stringify(
+            this.detalleComponent.detallesOrdenCompra,
+          );
         }
         this.form.patchValue({
           numeroOrden: orden.numeroOrden,
@@ -93,8 +104,11 @@ export class RegeditOrdenCompraComponent implements OnInit {
           totalCompra: orden.totalCompra,
           notas: orden.notas,
         });
+
+        this.initialFormState = JSON.stringify(this.form.getRawValue());
+        this.updateButtonState();
       },
-      error: (err) => {
+      error: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
@@ -110,7 +124,7 @@ export class RegeditOrdenCompraComponent implements OnInit {
   /* -------------------------------------------------------------------------- */
   createForm() {
     this.form = this.fb.group({
-      numeroOrden: ['', [Validators.required]],
+      numeroOrden: [{ value: '', disabled: true }, [Validators.required]],
       estado: ['', [Validators.required]],
       proveedor: [null, [Validators.required]],
       fechaOrdenCompra: [new Date(), [Validators.required]],
@@ -120,7 +134,11 @@ export class RegeditOrdenCompraComponent implements OnInit {
       notas: [''],
     });
 
+    this.initialFormState = JSON.stringify(this.form.getRawValue());
+    this.initialDetallesState = '[]';
+
     this.watchFormChanges();
+    this.updateButtonState();
   }
 
   private watchFormChanges() {
@@ -134,13 +152,38 @@ export class RegeditOrdenCompraComponent implements OnInit {
   }
 
   private updateButtonState() {
+    const currentFormState = JSON.stringify(this.form.getRawValue());
+    const formChanged = currentFormState !== this.initialFormState;
+
+    let detailsChanged = false;
+    if (this.detalleComponent) {
+      const currentDetailsState = JSON.stringify(
+        this.detalleComponent.detallesOrdenCompra,
+      );
+      detailsChanged = currentDetailsState !== this.initialDetallesState;
+    }
+
     const total = this.form.getRawValue().totalCompra || 0;
-    this.btnSaveDisabled = this.form.invalid || total < 0 || this.form.pristine;
+    this.btnSaveDisabled =
+      this.form.invalid || total < 0 || (!formChanged && !detailsChanged);
+  }
+
+  onDetallesChanged() {
+    this.updateButtonState();
   }
 
   actualizarTotalCompra(total: number) {
     this.form.patchValue({ totalCompra: total });
     this.form.markAsDirty();
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                            GENERAR NRO DE ORDEN                            */
+  /* -------------------------------------------------------------------------- */
+  generateNroOrden() {
+    this.ordenCompraService.generateNumber().subscribe((data) => {
+      this.form.patchValue({ numeroOrden: data });
+    });
   }
 
   /* -------------------------------------------------------------------------- */
@@ -175,7 +218,8 @@ export class RegeditOrdenCompraComponent implements OnInit {
 
       request.subscribe({
         next: (response) => {
-          console.log('Orden de Compra guardada:', response);
+          this.editOrdenCompra = response;
+
           const isNewOrden = !this.idOrdenCompra;
 
           if (isNewOrden) {
@@ -206,6 +250,15 @@ export class RegeditOrdenCompraComponent implements OnInit {
 
           // Marcar como 'pristine' para que el botón se deshabilite hasta que haya nuevos cambios
           this.form.markAsPristine();
+
+          // Actualizar estados iniciales para la detección de cambios
+          this.initialFormState = JSON.stringify(this.form.getRawValue());
+          if (this.detalleComponent) {
+            this.initialDetallesState = JSON.stringify(
+              this.detalleComponent.detallesOrdenCompra,
+            );
+          }
+
           this.updateButtonState();
 
           this.messageService.add({
@@ -218,7 +271,6 @@ export class RegeditOrdenCompraComponent implements OnInit {
           });
         },
         error: (error) => {
-          console.error('Error al guardar la Orden de Compra:', error);
           this.messageService.add({
             severity: 'error',
             summary: error.error?.titulo || 'Error al Guardar',

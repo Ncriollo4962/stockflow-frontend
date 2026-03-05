@@ -8,7 +8,7 @@
               <p-select
                 #productoSelect
                 formControlName="producto"
-                [options]="products"
+                [options]="products()"
                 optionLabel="nombre"
                 [filter]="false"
                 filterBy="nombre"

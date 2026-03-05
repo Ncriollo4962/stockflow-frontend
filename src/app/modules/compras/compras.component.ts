@@ -1,22 +1,21 @@
 import {
   ChangeDetectorRef,
   Component,
+  computed,
   inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { Table } from 'primeng/table';
 import { OrdenCompra } from '../../core/models/OrdenCompra';
 import { OrdenCompraService } from '../../core/services/orden-compra.service';
 import { ImportsModule } from '../../imports';
-
-interface Column {
-  field: string;
-  header: string;
-  customExportHeader?: string;
-}
+import {
+  Column,
+  DataTableComponent,
+} from '../shared/components/data-table/data-table.component';
+import { EstadoOrdenSeverityPipe } from '../shared/pipes/estado-orden-severity.pipe';
 
 interface ExportColumn {
   title: string;
@@ -25,16 +24,17 @@ interface ExportColumn {
 
 @Component({
   selector: 'app-compras',
-  imports: [ImportsModule],
-  providers: [MessageService, ConfirmationService],
+  standalone: true,
+  imports: [ImportsModule, DataTableComponent],
+  providers: [ConfirmationService],
   templateUrl: './compras.component.html',
 })
 export class ComprasComponent implements OnInit {
   ordenesCompra: OrdenCompra[] = [];
-  selectedOrdenes!: OrdenCompra[];
+  selectedOrdenes: OrdenCompra[] = [];
   statuses!: any[];
 
-  @ViewChild('dt') dt!: Table;
+  @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
   cols!: Column[];
   exportColumns!: ExportColumn[];
@@ -46,8 +46,10 @@ export class ComprasComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
+  private readonly estadoSeverity = new EstadoOrdenSeverityPipe();
+
   exportCSV() {
-    this.dt.exportCSV();
+    this.dataTable.dt?.exportCSV();
   }
 
   ngOnInit() {
@@ -63,10 +65,15 @@ export class ComprasComponent implements OnInit {
     this.cols = [
       { field: 'numeroOrden', header: 'Número Orden' },
       { field: 'proveedor.nombre', header: 'Proveedor' },
-      { field: 'fechaOrdenCompra', header: 'Fecha' },
-      { field: 'fechaEntrega', header: 'Fecha Entrega' },
-      { field: 'totalCompra', header: 'Total' },
-      { field: 'estado', header: 'Estado' },
+      { field: 'fechaOrdenCompra', header: 'Fecha', type: 'date' },
+      { field: 'fechaEntrega', header: 'Fecha Entrega', type: 'date' },
+      { field: 'totalCompra', header: 'Total', type: 'currency' },
+      {
+        field: 'estado',
+        header: 'Estado',
+        type: 'tag',
+        tagSeverity: (value) => this.estadoSeverity.transform(value),
+      },
     ];
 
     this.exportColumns = this.cols.map((col) => ({
@@ -94,7 +101,7 @@ export class ComprasComponent implements OnInit {
       header: 'Confirmar',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.ordenCompraService.deleteOrdenCompra(orden).subscribe({
+        this.ordenCompraService.deleteOrdenCompra(orden.id!).subscribe({
           next: () => {
             this.ordenesCompra = this.ordenesCompra.filter(
               (val) => val.id !== orden.id,
@@ -120,19 +127,18 @@ export class ComprasComponent implements OnInit {
     });
   }
 
-  deleteSelectedOrdenes($event: Event) {
-    $event.stopPropagation();
-    if (this.selectedOrdenes && this.selectedOrdenes.length > 0) {
+  deleteSelectedOrdenes(selected: OrdenCompra[]) {
+    if (selected && selected.length > 0) {
       this.confirmationService.confirm({
         message:
           '¿Estás seguro de que quieres eliminar las ' +
-          this.selectedOrdenes.length +
+          selected.length +
           ' órdenes seleccionadas?',
         header: 'Confirmar',
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
           this.ordenCompraService
-            .deleteOrdenCompra(this.selectedOrdenes[0])
+            .deleteMultipleOrdenCompras(selected.map((o) => o.id!))
             .subscribe(() => {
               this.messageService.add({
                 severity: 'success',
@@ -140,6 +146,7 @@ export class ComprasComponent implements OnInit {
                 detail: 'Todas las órdenes han sido eliminadas',
               });
               this.loadOrdenes();
+              this.selectedOrdenes = [];
             });
         },
       });

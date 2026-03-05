@@ -37,9 +37,21 @@ export class OrdenCompraService {
       .pipe(map((response) => response.data));
   }
 
-  deleteOrdenCompra(ordenCompra: OrdenCompra): Observable<void> {
+  deleteOrdenCompra(id: number): Observable<void> {
     return this.http
-      .delete<ApiResponse>(`${this.apiUrl}/delete/${ordenCompra}`)
+      .delete<ApiResponse>(`${this.apiUrl}/delete/${id}`)
+      .pipe(map((response) => response.data));
+  }
+
+  deleteMultipleOrdenCompras(ids: number[]): Observable<void> {
+    return this.http
+      .delete<ApiResponse>(`${this.apiUrl}/delete-multiple`, { body: ids })
+      .pipe(map((response) => response.data));
+  }
+
+  generateNumber(): Observable<number> {
+    return this.http
+      .get<ApiResponse>(`${this.apiUrl}/generate-number`)
       .pipe(map((response) => response.data));
   }
 }

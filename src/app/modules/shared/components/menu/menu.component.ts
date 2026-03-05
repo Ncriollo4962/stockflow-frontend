@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { StyleClassModule } from 'primeng/styleclass';
 
 @Component({
-  selector: 'menu',
+  selector: 'app-menu',
+  standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     RippleModule,
     ButtonModule,
     AvatarModule,
