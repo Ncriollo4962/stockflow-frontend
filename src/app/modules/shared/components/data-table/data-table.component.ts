@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import {
   Component,
   EventEmitter,
@@ -13,13 +12,22 @@ export interface Column {
   field: string;
   header: string;
   type?: 'text' | 'currency' | 'date' | 'tag';
-  tagSeverity?: (value: any) => 'success' | 'info' | 'warn' | 'danger' | 'secondary' | 'contrast' | undefined;
+  tagSeverity?: (
+    value: any,
+  ) =>
+    | 'success'
+    | 'info'
+    | 'warn'
+    | 'danger'
+    | 'secondary'
+    | 'contrast'
+    | undefined;
 }
 
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [CommonModule, ImportsModule],
+  imports: [ImportsModule],
   templateUrl: './data-table.component.html',
 })
 export class DataTableComponent {

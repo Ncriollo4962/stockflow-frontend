@@ -30,8 +30,8 @@ export const modulesRoutes: Routes = [
       },
       {
         path: 'ventas',
-        loadComponent: () =>
-          import('./ventas/ventas.component').then((m) => m.VentasComponent),
+        loadChildren: () =>
+          import('./ventas/ventas.routes').then((m) => m.ventasModulesRoutes),
       },
       {
         path: 'usuarios',

@@ -1,50 +1,39 @@
 import { DatePipe } from '@angular/common';
-import {
-  Component,
-  computed,
-  inject,
-  OnInit,
-  Signal,
-  ViewChild,
-} from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
-import { AuthService } from '../../../core/auth/services/auth.service';
-import { OrdenCompra } from '../../../core/models/OrdenCompra';
-import { Proveedor } from '../../../core/models/Proveedor';
-import { OrdenCompraService } from '../../../core/services/orden-compra.service';
-import { ProveedorService } from '../../../core/services/proveedor.service';
+import { DetalleOrdenVentaComponent } from '../detalle-orden-venta/detalle-orden-venta.component';
 import { ImportsModule } from '../../../imports';
-import { listEstadosOrden } from '../../shared/enums/estados-orden';
-import { DetalleOrdenCompraComponent } from '../detalle-orden-compra/detalle-orden-compra.component';
+import { OrdenVenta } from '../../../core/models/OrdenVenta';
+import { OrdenVentaService } from '../../../core/services/orden-venta.service';
+import { AuthService } from '../../../core/auth/services/auth.service';
+import { listEstadosOrdenVenta } from '../../shared/enums/estados-orden';
 
 @Component({
-  selector: 'app-regedit-orden-compra',
-  imports: [ImportsModule, DatePipe, DetalleOrdenCompraComponent],
-  templateUrl: './regedit-orden-compra.component.html',
+  selector: 'app-regedit-orden-venta',
+  standalone: true,
+  imports: [ImportsModule, DatePipe, DetalleOrdenVentaComponent],
+  templateUrl: './regedit-orden-venta.component.html',
 })
-export class RegeditOrdenCompraComponent implements OnInit {
+export class RegeditOrdenVentaComponent implements OnInit {
   /* -------------------------------------------------------------------------- */
   /*                                 VARIABLES                                  */
   /* -------------------------------------------------------------------------- */
-  proveedores!: Signal<Proveedor[]>;
-  estadosOrden = listEstadosOrden;
+  estadosOrden = listEstadosOrdenVenta;
   form: FormGroup = {} as FormGroup;
-  idOrdenCompra: number | null = null;
-  editOrdenCompra: OrdenCompra = new OrdenCompra();
+  idOrdenVenta: number | null = null;
+  editOrdenVenta: OrdenVenta = new OrdenVenta();
   initialFormState: string = '{}';
   initialDetallesState: string = '[]';
-  @ViewChild(DetalleOrdenCompraComponent)
-  detalleComponent!: DetalleOrdenCompraComponent;
+  @ViewChild(DetalleOrdenVentaComponent)
+  detalleComponent!: DetalleOrdenVentaComponent;
 
   /* -------------------------------------------------------------------------- */
   /*                                 CONSTRUCTOR                                */
   /* -------------------------------------------------------------------------- */
   fb = inject(FormBuilder);
-  proveedorService = inject(ProveedorService);
-  ordenCompraService = inject(OrdenCompraService);
+  ordenVentaService = inject(OrdenVentaService);
   usuarioLogueado = inject(AuthService);
   messageService = inject(MessageService);
   btnSaveDisabled: boolean = true;
@@ -58,51 +47,41 @@ export class RegeditOrdenCompraComponent implements OnInit {
   ngOnInit() {
     this.createForm();
 
-    this.proveedores = computed(() => {
-      return this.proveedoresRx.value() || [];
-    });
-
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
-        this.idOrdenCompra = +id;
-        this.loadOrdenCompra(this.idOrdenCompra);
+        this.idOrdenVenta = +id;
+        this.loadOrdenVenta(this.idOrdenVenta);
       } else {
         this.generateNroOrden();
       }
     });
   }
 
-  loadOrdenCompra(id: number) {
-    this.ordenCompraService.getOrdenCompraById(id).subscribe({
+  loadOrdenVenta(id: number) {
+    this.ordenVentaService.getOrdenVentaById(id).subscribe({
       next: (orden) => {
-        this.editOrdenCompra = orden;
+        this.editOrdenVenta = orden;
         if (this.detalleComponent) {
-          const detalles = orden.detallesOrdenCompra || [];
+          const detalles = orden.detallesOrdenVenta || [];
           detalles.forEach((detalle, index) => {
             detalle.nroItemTemp = index + 1;
           });
-          this.detalleComponent.detallesOrdenCompra = detalles;
+          this.detalleComponent.detallesOrdenVenta = detalles;
 
           this.initialDetallesState = JSON.stringify(
-            this.detalleComponent.detallesOrdenCompra,
+            this.detalleComponent.detallesOrdenVenta,
           );
         }
         this.form.patchValue({
           numeroOrden: orden.numeroOrden,
           estado: orden.estado,
-          proveedor: orden.proveedor,
-          fechaOrdenCompra: orden.fechaOrdenCompra
-            ? new Date(orden.fechaOrdenCompra)
-            : null,
-          fechaEntrega: orden.fechaEntrega
-            ? new Date(orden.fechaEntrega)
-            : null,
-          fechaCreacion: orden.fechaCreacion
-            ? new Date(orden.fechaCreacion)
-            : null,
-          totalCompra: orden.totalCompra,
-          notas: orden.notas,
+          clienteNombre: orden.clienteNombre,
+          clienteEmail: orden.clienteEmail,
+          clienteTelefono: orden.clienteTelefono,
+          direccion: orden.direccion,
+          fechaVenta: orden.fechaVenta ? new Date(orden.fechaVenta) : null,
+          totalVenta: orden.totalVenta,
         });
 
         this.initialFormState = JSON.stringify(this.form.getRawValue());
@@ -112,9 +91,9 @@ export class RegeditOrdenCompraComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'No se pudo cargar la orden de compra',
+          detail: 'No se pudo cargar la orden de venta',
         });
-        this.router.navigate(['/compras']);
+        this.router.navigate(['/ventas']);
       },
     });
   }
@@ -126,12 +105,12 @@ export class RegeditOrdenCompraComponent implements OnInit {
     this.form = this.fb.group({
       numeroOrden: [{ value: '', disabled: true }, [Validators.required]],
       estado: ['', [Validators.required]],
-      proveedor: [null, [Validators.required]],
-      fechaOrdenCompra: [new Date(), [Validators.required]],
-      fechaEntrega: [null],
-      fechaCreacion: [{ value: new Date(), disabled: true }],
-      totalCompra: [{ value: 0, disabled: true }],
-      notas: [''],
+      clienteNombre: ['', [Validators.required]],
+      clienteEmail: ['', [Validators.email]],
+      clienteTelefono: [''],
+      direccion: [''],
+      fechaVenta: [new Date(), [Validators.required]],
+      totalVenta: [{ value: 0, disabled: true }],
     });
 
     this.initialFormState = JSON.stringify(this.form.getRawValue());
@@ -158,12 +137,12 @@ export class RegeditOrdenCompraComponent implements OnInit {
     let detailsChanged = false;
     if (this.detalleComponent) {
       const currentDetailsState = JSON.stringify(
-        this.detalleComponent.detallesOrdenCompra,
+        this.detalleComponent.detallesOrdenVenta,
       );
       detailsChanged = currentDetailsState !== this.initialDetallesState;
     }
 
-    const total = this.form.getRawValue().totalCompra || 0;
+    const total = this.form.getRawValue().totalVenta || 0;
     this.btnSaveDisabled =
       this.form.invalid || total < 0 || (!formChanged && !detailsChanged);
   }
@@ -172,8 +151,8 @@ export class RegeditOrdenCompraComponent implements OnInit {
     this.updateButtonState();
   }
 
-  actualizarTotalCompra(total: number) {
-    this.form.patchValue({ totalCompra: total });
+  actualizarTotalVenta(total: number) {
+    this.form.patchValue({ totalVenta: total });
     this.form.markAsDirty();
   }
 
@@ -181,79 +160,67 @@ export class RegeditOrdenCompraComponent implements OnInit {
   /*                            GENERAR NRO DE ORDEN                            */
   /* -------------------------------------------------------------------------- */
   generateNroOrden() {
-    this.ordenCompraService.generateNumber().subscribe((data) => {
+    this.ordenVentaService.generateNumber().subscribe((data) => {
       this.form.patchValue({ numeroOrden: data });
     });
   }
 
   /* -------------------------------------------------------------------------- */
-  /*                                  PROVEEDORES                               */
-  /* -------------------------------------------------------------------------- */
-
-  proveedoresRx = rxResource({
-    loader: () => this.proveedorService.getProveedores(),
-  });
-
-  /* -------------------------------------------------------------------------- */
-  /*                            PROCESO_ORDEN_COMPRA                            */
+  /*                            PROCESO_ORDEN_VENTA                             */
   /* -------------------------------------------------------------------------- */
   guardarOrden() {
     if (this.form.valid) {
-      const ordenCompra = this.form.getRawValue() as OrdenCompra;
-      ordenCompra.usuario = this.usuarioLogueado.user();
+      const ordenVenta = this.form.getRawValue() as OrdenVenta;
+      ordenVenta.usuario = this.usuarioLogueado.user();
 
       if (this.detalleComponent) {
-        ordenCompra.detallesOrdenCompra =
-          this.detalleComponent.detallesOrdenCompra;
+        ordenVenta.detallesOrdenVenta =
+          this.detalleComponent.detallesOrdenVenta;
       }
 
       let request;
-      if (this.idOrdenCompra) {
-        ordenCompra.id = this.idOrdenCompra;
-        ordenCompra.version = this.editOrdenCompra.version;
-        request = this.ordenCompraService.updateOrdenCompra(ordenCompra);
+      if (this.idOrdenVenta) {
+        ordenVenta.id = this.idOrdenVenta;
+        ordenVenta.version = this.editOrdenVenta.version;
+        request = this.ordenVentaService.updateOrdenVenta(ordenVenta);
       } else {
-        request = this.ordenCompraService.createOrdenCompra(ordenCompra);
+        request = this.ordenVentaService.createOrdenVenta(ordenVenta);
       }
 
       request.subscribe({
         next: (response) => {
-          this.editOrdenCompra = response;
+          this.editOrdenVenta = response;
 
-          const isNewOrden = !this.idOrdenCompra;
+          const isNewOrden = !this.idOrdenVenta;
 
           if (isNewOrden) {
-            this.idOrdenCompra = response.id;
+            this.idOrdenVenta = response.id;
             // Navegar a modo edición
-            this.router.navigate(['/compras/editOrdenCompra', response.id], {
+            this.router.navigate(['/ventas/editOrdenVenta', response.id], {
               replaceUrl: true,
             });
           }
-
           this.form.patchValue({
             numeroOrden: response.numeroOrden,
             estado: response.estado,
-            proveedor: response.proveedor,
-            fechaOrdenCompra: response.fechaOrdenCompra
-              ? new Date(response.fechaOrdenCompra)
+            clienteNombre: response.clienteNombre,
+            clienteEmail: response.clienteEmail,
+            clienteTelefono: response.clienteTelefono,
+            direccion: response.direccion,
+            fechaVenta: response.fechaVenta
+              ? new Date(response.fechaVenta)
               : null,
-            fechaEntrega: response.fechaEntrega
-              ? new Date(response.fechaEntrega)
-              : null,
-            fechaCreacion: response.fechaCreacion
-              ? new Date(response.fechaCreacion)
-              : null,
-            totalCompra: response.totalCompra,
-            notas: response.notas,
+            totalVenta: response.totalVenta,
           });
 
+          // Marcar como 'pristine' para que el botón se deshabilite hasta que haya nuevos cambios
           this.form.markAsPristine();
 
           // Actualizar estados iniciales para la detección de cambios
           this.initialFormState = JSON.stringify(this.form.getRawValue());
           if (this.detalleComponent) {
             this.initialDetallesState = JSON.stringify(
-              this.detalleComponent.detallesOrdenCompra,
+              this.detalleComponent.detallesOrdenVenta,
             );
           }
 
@@ -262,8 +229,8 @@ export class RegeditOrdenCompraComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: isNewOrden
-              ? 'Orden de Compra Registrada'
-              : 'Orden de Compra Actualizada',
+              ? 'Orden de Venta Registrada'
+              : 'Orden de Venta Actualizada',
             detail: `Número de Orden: ${response.numeroOrden}`,
             life: 3000,
           });
@@ -284,6 +251,6 @@ export class RegeditOrdenCompraComponent implements OnInit {
   }
 
   cancelarOrden() {
-    this.router.navigate(['/compras']);
+    this.router.navigate(['/ventas']);
   }
 }

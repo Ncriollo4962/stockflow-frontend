@@ -1,1 +1,12 @@
-<p>ventas works!</p>
+<p-confirmDialog />
+<app-data-table
+    #dataTable
+    [data]="ordenesVenta"
+    [cols]="cols"
+    [globalFilterFields]="['numeroOrden', 'clienteNombre', 'fechaVenta', 'estado']"
+    [(selection)]="selectedOrdenes"
+    (shouldonCreate)="openNew()"
+    (shouldonEdit)="editOrden($event)"
+    (shouldonDelete)="deleteOrden($event)"
+    (shouldonDeleteSelected)="deleteSelectedOrdenes($event)"
+></app-data-table>
