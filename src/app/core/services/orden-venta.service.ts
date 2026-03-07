@@ -54,4 +54,10 @@ export class OrdenVentaService {
       .get<ApiResponse>(`${this.apiUrl}/generate-number`)
       .pipe(map((response) => response.data));
   }
+
+  getPendientesDespacho(): Observable<OrdenVenta[]> {
+    return this.http
+      .get<ApiResponse>(`${this.apiUrl}/pendientes-despacho`)
+      .pipe(map((response) => response.data || []));
+  }
 }
