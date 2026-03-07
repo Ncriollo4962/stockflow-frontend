@@ -1,5 +1,13 @@
 <div class="card p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
-  <h2 class="text-2xl font-bold mb-1 text-text-main text-center">Registro de Orden de Compra</h2>
+  <div class="flex-none flex flex-col gap-1 mb-4 px-4 pt-4">
+    <div class="flex items-center gap-2 text-primary">
+      <i class="pi pi-file-edit text-xl"></i>
+      <span class="text-xl font-semibold">Registro de Orden de Compra</span>
+    </div>
+    <span class="text-surface-500 dark:text-surface-400 text-sm">
+      Crear o editar orden de compra
+    </span>
+  </div>
 
   <form [formGroup]="form" class="grid grid-cols-1 px-6">
       <p-fieldset legend="Datos de la Orden">

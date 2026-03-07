@@ -44,6 +44,10 @@ export class DataTableComponent {
   @Input() currentPageReportTemplate: string =
     'Mostrando {first} a {last} de {totalRecords} registros';
 
+  @Input() showCreate: boolean = true;
+  @Input() showEdit: boolean = true;
+  @Input() showDelete: boolean = true;
+
   @Output() selectionChange = new EventEmitter<any[] | null>();
   @Output() shouldonCreate = new EventEmitter<void>();
   @Output() shouldonEdit = new EventEmitter<any>();

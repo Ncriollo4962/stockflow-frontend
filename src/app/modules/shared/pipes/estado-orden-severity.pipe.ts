@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { EstadosOrdenCompra } from '../enums/estados-orden';
 
 @Pipe({
   name: 'estadoOrdenSeverity',
@@ -31,6 +30,7 @@ export class EstadoOrdenSeverityPipe implements PipeTransform {
 
       case 'PENDIENTE_RECEPCION':
       case 'PENDIENTE_RECEPCIÓN': // Por si acaso con tilde
+      case 'PENDIENTE_DESPACHO':
       case 'RECIBIDA_PARCIAL':
         return 'warn';
 

@@ -225,9 +225,9 @@ export class RegeditOrdenCompraComponent implements OnInit {
           if (isNewOrden) {
             this.idOrdenCompra = response.id;
             // Navegar a modo edición
-            this.router.navigate(['/compras/editOrdenCompra', response.id], {
-              replaceUrl: true,
-            });
+            // this.router.navigate(['/compras/editOrdenCompra', response.id], {
+            //   replaceUrl: true,
+            // });
           }
 
           this.form.patchValue({
@@ -265,8 +265,11 @@ export class RegeditOrdenCompraComponent implements OnInit {
               ? 'Orden de Compra Registrada'
               : 'Orden de Compra Actualizada',
             detail: `Número de Orden: ${response.numeroOrden}`,
-            life: 3000,
+            life: 1000,
           });
+          setTimeout(() => {
+            this.router.navigate(['/compras']);
+          }, 1000);
         },
         error: (error) => {
           this.messageService.add({

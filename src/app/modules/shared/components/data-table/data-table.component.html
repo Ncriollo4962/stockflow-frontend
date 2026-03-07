@@ -19,11 +19,13 @@
             <div class="flex items-center justify-between">
                 <div #start>
                     <p-button
+                        *ngIf="showCreate"
                         label="Nuevo"
                         icon="pi pi-plus"
                         class="mr-2"
                         (onClick)="shouldonCreate.emit()" />
                     <p-button
+                        *ngIf="showDelete"
                         severity="danger"
                         label="Eliminar"
                         icon="pi pi-trash"
@@ -50,7 +52,7 @@
                     {{ col.header }}
                     <p-sortIcon [field]="col.field" />
                 </th>
-                <th style="min-width: 12rem" scope="col">Acciones</th>
+                <th *ngIf="showEdit || showDelete" style="min-width: 12rem" scope="col">Acciones</th>
             </tr>
         </ng-template>
         <ng-template #body let-rowData>
@@ -74,14 +76,16 @@
                         </span>
                     </ng-container>
                 </td>
-                <td>
+                <td *ngIf="showEdit || showDelete">
                     <p-button
+                        *ngIf="showEdit"
                         icon="pi pi-pencil"
                         class="mr-2"
                         [rounded]="true"
                         [outlined]="true"
                         (onClick)="shouldonEdit.emit(rowData)" />
                     <p-button
+                        *ngIf="showDelete"
                         icon="pi pi-trash"
                         severity="danger"
                         [rounded]="true"

@@ -104,6 +104,7 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DrawerModule } from 'primeng/drawer';
 import { EstadoOrdenSeverityPipe } from './modules/shared/pipes/estado-orden-severity.pipe';
+import { EstadoInventarioSeverityPipe } from './modules/shared/pipes/estado-inventario-severity.pipe';
 
 @NgModule({
   imports: [
@@ -212,6 +213,7 @@ import { EstadoOrdenSeverityPipe } from './modules/shared/pipes/estado-orden-sev
     AutoFocusModule,
     OverlayBadgeModule,
     EstadoOrdenSeverityPipe,
+    EstadoInventarioSeverityPipe,
   ],
   exports: [
     TabsModule,
@@ -319,6 +321,7 @@ import { EstadoOrdenSeverityPipe } from './modules/shared/pipes/estado-orden-sev
     OverlayBadgeModule,
     PopoverModule,
     EstadoOrdenSeverityPipe,
+    EstadoInventarioSeverityPipe,
   ],
   providers: [],
 })

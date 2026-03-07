@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +12,7 @@ import { listEstadosOrdenVenta } from '../../shared/enums/estados-orden';
 @Component({
   selector: 'app-regedit-orden-venta',
   standalone: true,
-  imports: [ImportsModule, DatePipe, DetalleOrdenVentaComponent],
+  imports: [ImportsModule, DetalleOrdenVentaComponent],
   templateUrl: './regedit-orden-venta.component.html',
 })
 export class RegeditOrdenVentaComponent implements OnInit {
@@ -196,9 +195,9 @@ export class RegeditOrdenVentaComponent implements OnInit {
           if (isNewOrden) {
             this.idOrdenVenta = response.id;
             // Navegar a modo edición
-            this.router.navigate(['/ventas/editOrdenVenta', response.id], {
-              replaceUrl: true,
-            });
+            // this.router.navigate(['/ventas/editOrdenVenta', response.id], {
+            //   replaceUrl: true,
+            // });
           }
           this.form.patchValue({
             numeroOrden: response.numeroOrden,
@@ -232,8 +231,11 @@ export class RegeditOrdenVentaComponent implements OnInit {
               ? 'Orden de Venta Registrada'
               : 'Orden de Venta Actualizada',
             detail: `Número de Orden: ${response.numeroOrden}`,
-            life: 3000,
+            life: 1000,
           });
+          setTimeout(() => {
+            this.router.navigate(['/ventas']);
+          }, 1000);
         },
         error: (error) => {
           this.messageService.add({

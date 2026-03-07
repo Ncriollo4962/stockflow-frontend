@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { OrdenCompra } from '../../core/models/OrdenCompra';
 import { OrdenCompraService } from '../../core/services/orden-compra.service';
 import { ImportsModule } from '../../imports';
@@ -110,8 +111,9 @@ export class ComprasComponent implements OnInit {
               severity: 'success',
               summary: 'Exitoso',
               detail: 'Orden Eliminada',
-              life: 3000,
+              life: 1500,
             });
+            this.loadOrdenes();
             this.cd.markForCheck();
           },
           error: (err) => {
@@ -137,9 +139,12 @@ export class ComprasComponent implements OnInit {
         header: 'Confirmar',
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
-          this.ordenCompraService
-            .deleteMultipleOrdenCompras(selected.map((o) => o.id!))
-            .subscribe(() => {
+          const deleteObservables = selected.map((orden) =>
+            this.ordenCompraService.deleteOrdenCompra(orden.id!),
+          );
+
+          forkJoin(deleteObservables).subscribe({
+            next: () => {
               this.messageService.add({
                 severity: 'success',
                 summary: 'Órdenes eliminadas',
@@ -147,7 +152,17 @@ export class ComprasComponent implements OnInit {
               });
               this.loadOrdenes();
               this.selectedOrdenes = [];
-            });
+            },
+            error: (err) => {
+              console.error('Error eliminando órdenes', err);
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Ocurrió un error al eliminar algunas órdenes',
+              });
+              this.loadOrdenes();
+            },
+          });
         },
       });
     }

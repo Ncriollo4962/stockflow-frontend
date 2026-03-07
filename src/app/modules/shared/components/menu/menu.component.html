@@ -116,21 +116,21 @@
                                     leaveActiveClass="animate-slideup"
                                     class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple"
                                 >
-                                    <i class="pi pi-eye mr-2"></i>
+                                    <i class="pi pi-search mr-2"></i>
                                     <span class="font-medium">Consultas inventario</span>
                                     <i class="pi pi-chevron-down ml-auto"></i>
                                 </a>
                                 <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
                                     <li>
-                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                                            <i class="pi pi-table mr-2"></i>
-                                            <span class="font-medium">View</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                                            <i class="pi pi-search mr-2"></i>
-                                            <span class="font-medium">Search</span>
+                                        <a
+                                        pRipple
+                                        routerLink="/inventario"
+                                        class="flex items-center cursor-pointer
+                                        p-4 rounded-border text-surface-700
+                                        dark:text-surface-100 hover:bg-surface-100
+                                        dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                            <i class="pi pi-box mr-2"></i>
+                                            <span class="font-medium">inventario general</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -151,15 +151,12 @@
                                 </a>
                                 <ul class="list-none py-0 pl-4 pr-0 m-0 hidden overflow-y-hidden transition-all duration-[400ms] ease-in-out">
                                     <li>
-                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
+                                        <a
+                                        routerLink="/inventario/movimientos"
+                                        pRipple
+                                        class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
                                             <i class="pi pi-table mr-2"></i>
-                                            <span class="font-medium">View</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a pRipple class="flex items-center cursor-pointer p-4 rounded-border text-surface-700 dark:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-700 duration-150 transition-colors p-ripple">
-                                            <i class="pi pi-search mr-2"></i>
-                                            <span class="font-medium">Search</span>
+                                            <span class="font-medium">Movimientos</span>
                                         </a>
                                     </li>
                                 </ul>

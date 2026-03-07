@@ -1,0 +1,29 @@
+<div class="card p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
+  <div class="flex-none flex flex-col gap-1 mb-4 px-4 pt-4">
+    <div class="flex items-center gap-2 text-primary">
+      <i class="pi pi-list text-xl"></i>
+      <span class="text-xl font-semibold">Movimientos de Inventario</span>
+    </div>
+    <span class="text-surface-500 dark:text-surface-400 text-sm">
+      Historial de entradas y salidas
+    </span>
+  </div>
+
+  <p-confirmDialog />
+  <app-data-table
+    #dataTable
+    [data]="movimientos"
+    [cols]="cols"
+    [globalFilterFields]="['producto.nombre', 'tipoMovimiento', 'ubicacion.nombre', 'usuario.nombre', 'referencia']"
+    [(selection)]="selectedMovimientos"
+    (shouldonCreate)="openNew()"
+    [showEdit]="false"
+    [showDelete]="false"
+  ></app-data-table>
+</div>
+
+<app-regedit-movimiento-inventario
+    *ngIf="dialogVisible"
+    [(visible)]="dialogVisible"
+    (saveSuccess)="loadMovimientos()"
+></app-regedit-movimiento-inventario>

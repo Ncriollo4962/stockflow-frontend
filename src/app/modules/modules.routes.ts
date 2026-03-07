@@ -16,9 +16,9 @@ export const modulesRoutes: Routes = [
       },
       {
         path: 'inventario',
-        loadComponent: () =>
-          import('./inventario/inventario.component').then(
-            (m) => m.InventarioComponent,
+        loadChildren: () =>
+          import('./inventario/inventario.routes').then(
+            (m) => m.inventarioModulesRoutes,
           ),
       },
       {

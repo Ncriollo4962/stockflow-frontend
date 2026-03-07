@@ -122,8 +122,9 @@ export class VentasComponent implements OnInit {
                 severity: 'success',
                 summary: 'Exitoso',
                 detail: 'Orden de Venta Eliminada',
-                life: 3000,
+                life: 1500,
               });
+              this.loadOrdenesVenta();
               this.cd.markForCheck();
             },
             error: (error) => {
@@ -161,8 +162,9 @@ export class VentasComponent implements OnInit {
                 severity: 'success',
                 summary: 'Exitoso',
                 detail: 'Órdenes de Venta Eliminadas',
-                life: 3000,
+                life: 1500,
               });
+              this.loadOrdenesVenta();
               this.cd.markForCheck();
             },
             error: (error) => {

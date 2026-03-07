@@ -1,0 +1,49 @@
+<div class="card h-[calc(100vh-7rem)] flex flex-col  p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
+  <div class="flex-none flex flex-col gap-1 mb-4">
+    <div class="flex items-center gap-2 text-primary">
+      <i class="pi pi-arrow-right-arrow-left text-xl"></i>
+      <span class="text-xl font-semibold">Registro de Movimientos</span>
+    </div>
+    <span class="text-surface-500 dark:text-surface-400 text-sm">
+      Gestión de entradas y salidas de inventario
+    </span>
+  </div>
+
+  <div class="flex-1 overflow-auto min-h-0">
+    <app-editable-table
+      [header]="'Detalle de Movimientos'"
+      [data]="movimientos"
+      [cols]="movimientoCols"
+      dataKey="id"
+      (rowEditInit)="onRowEditInit($event)"
+      (rowEditSave)="onRowEditSave($event)"
+      (rowEditCancel)="onRowEditCancel($event)"
+      (rowAdd)="onRowAdd()"
+      (rowDelete)="onRowDelete($event)"
+      [dialogVisible]="visible"
+      (dialogVisibleChange)="visible = $event; visibleChange.emit($event)"
+    ></app-editable-table>
+  </div>
+
+  <div class="flex-none flex justify-end mt-2 gap-2 p-2 bg-[var(--card-bg)]">
+      <button
+          pButton
+          [label]="isSaving ? 'Guardando...' : 'Guardar'"
+          [disabled]="isSaving"
+          [loading]="isSaving"
+          icon="pi pi-check"
+          (click)="save()"
+          severity="success"
+          [disabled]="isSaving"
+          [loading]="isSaving"
+      ></button>
+      <button
+          pButton
+          label="Cancelar"
+          icon="pi pi-times"
+          (click)="cancelar()"
+          severity="danger"
+          [disabled]="isSaving"
+      ></button>
+  </div>
+</div>
