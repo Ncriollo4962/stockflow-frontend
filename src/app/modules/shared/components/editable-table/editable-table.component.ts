@@ -2,15 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { SelectModule } from 'primeng/select';
-import { CalendarModule } from 'primeng/calendar';
-import { Dialog } from 'primeng/dialog';
-import { DatePickerModule } from 'primeng/datepicker';
 import { EstadoInventarioSeverityPipe } from '../../pipes/estado-inventario-severity.pipe';
 
 export interface EditableColumn {
@@ -39,7 +38,6 @@ export interface EditableColumn {
     TagModule,
     SelectModule,
     CalendarModule,
-    Dialog,
     DatePickerModule,
     EstadoInventarioSeverityPipe,
   ],
@@ -49,9 +47,10 @@ export interface EditableColumn {
 export class EditableTableComponent {
   @Input() data: any[] = [];
   @Input() cols: EditableColumn[] = [];
-  @Input() dataKey: string = 'id';
+  @Input() dataKey: string = 'nroItemTemp';
   @Input() tableStyle: any = { 'min-width': '50rem' };
   @Input() header: string = 'Header';
+  @Input() showBuscarOrdenes: boolean = false;
 
   @Output() rowEditInit = new EventEmitter<any>();
   @Output() rowEditSave = new EventEmitter<any>();
@@ -63,6 +62,12 @@ export class EditableTableComponent {
   @Input() dialogVisible: boolean = false;
   @Output() dialogVisibleChange = new EventEmitter<boolean>();
 
+  private readonly dateFormatter = new Intl.DateTimeFormat('es-PE', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+
   getDisplayValue(rowData: any, col: EditableColumn): any {
     const val = rowData[col.field];
     if (val === null || val === undefined) {
@@ -70,12 +75,9 @@ export class EditableTableComponent {
     }
     if (col.type === 'select') {
       const optionLabel = col.optionLabel || 'label';
-      // Case 1: Value is an object
       if (val && typeof val === 'object') {
-        // 1.1 Try configured label property
         if (val[optionLabel]) return val[optionLabel];
 
-        // 1.2 If object is incomplete (e.g. has ID but no name), try to find full object in options
         if (val.id && col.options) {
           const match = col.options.find((opt) => opt.id === val.id);
           if (match && match[optionLabel]) {
@@ -83,14 +85,12 @@ export class EditableTableComponent {
           }
         }
 
-        // 1.3 Fallbacks comunes
         if (val.nombre) return val.nombre;
         if (val.label) return val.label;
         if (val.name) return val.name;
         if (val.descripcion) return val.descripcion;
         if (val.codigo) return val.codigo;
 
-        // 1.4 Debug fallback
         return JSON.stringify(val);
       }
       if (col.options && col.optionValue) {

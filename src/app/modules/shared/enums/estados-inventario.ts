@@ -1,9 +1,15 @@
-export enum EstadosInventario {
+export enum EstadosMovInventario {
   ENTRADA = 'Entrada',
   SALIDA = 'Salida',
-  AJUSTE_SALIDA_INVENTARIO = 'Ajustes Salida Inventario Mensual',
-  AJUSTE_ENTRADA_INVENTARIO = 'Ajustes Entrada Inventario Mensual',
   TRANSFERENCIA = 'Transferencia Mercaderia',
 }
 
-export const listEstadosInventario = Object.values(EstadosInventario);
+export enum EstadosMovInventarioMes {
+  AJUSTE_SALIDA_INVENTARIO = 'Ajustes Salida Inventario Mensual',
+  AJUSTE_ENTRADA_INVENTARIO = 'Ajustes Entrada Inventario Mensual',
+}
+
+export const listEstadosMovInventario = Object.values(EstadosMovInventario);
+export const listEstadosMovInventarioMes = Object.values(
+  EstadosMovInventarioMes,
+);

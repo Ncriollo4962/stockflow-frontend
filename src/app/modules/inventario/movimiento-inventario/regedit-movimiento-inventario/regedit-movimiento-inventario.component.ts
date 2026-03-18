@@ -1,6 +1,7 @@
+import { DatePipe } from '@angular/common';
 import {
   Component,
-  effect,
+  computed,
   EventEmitter,
   inject,
   Input,
@@ -11,9 +12,14 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { forkJoin } from 'rxjs';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { MovimientoInventario } from '../../../../core/models/MovimientoInventario';
+import { OrdenCompra } from '../../../../core/models/OrdenCompra';
+import { OrdenVenta } from '../../../../core/models/OrdenVenta';
 import { MovimientoInventarioService } from '../../../../core/services/movimiento-inventario.service';
+import { OrdenCompraService } from '../../../../core/services/orden-compra.service';
+import { OrdenVentaService } from '../../../../core/services/orden-venta.service';
 import { ProductoService } from '../../../../core/services/producto.service';
 import { UbicacionService } from '../../../../core/services/ubicacion.service';
 import { ImportsModule } from '../../../../imports';
@@ -21,27 +27,40 @@ import {
   EditableColumn,
   EditableTableComponent,
 } from '../../../../modules/shared/components/editable-table/editable-table.component';
-import { listEstadosInventario } from '../../../shared/enums/estados-inventario';
+import {
+  EstadosMovInventario,
+  listEstadosMovInventario,
+  listEstadosMovInventarioMes,
+} from '../../../shared/enums/estados-inventario';
+import { DialogOrdenesPendientesComponent } from './dialog-ordenes-pendientes/dialog-ordenes-pendientes.component';
 
 @Component({
   selector: 'app-regedit-movimiento-inventario',
   standalone: true,
-  imports: [ImportsModule, EditableTableComponent],
+  imports: [
+    ImportsModule,
+    EditableTableComponent,
+    DialogOrdenesPendientesComponent,
+  ],
+  providers: [DatePipe],
   templateUrl: './regedit-movimiento-inventario.component.html',
 })
 export class RegeditMovimientoInventarioComponent implements OnInit {
-  movimientos: MovimientoInventario[] = [];
-  clonedMovimientos: { [s: string]: MovimientoInventario } = {};
-  isSaving: boolean = false;
-
   @Input() visible: boolean = false;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() saveSuccess = new EventEmitter<void>();
 
-  listEstadosInventario = listEstadosInventario;
-
-  // Table Configuration
-  movimientoCols: EditableColumn[] = [];
+  movimientos: MovimientoInventario[] = [];
+  clonedMovimientos: { [s: string]: MovimientoInventario } = {};
+  isSaving: boolean = false;
+  ordenesCompraPendientes: OrdenCompra[] = [];
+  ordenesVentaPendientes: OrdenVenta[] = [];
+  ordenesDialogVisible: boolean = false;
+  ordenesDialogLoading: boolean = false;
+  ordenesDialogTab: string = 'compras';
+  listEstadosMovInventario: string[] = [];
+  showBuscarOrdenes: boolean = false;
+  nroItemTemp: number = 0;
 
   fb = inject(FormBuilder);
   movimientoService = inject(MovimientoInventarioService);
@@ -51,96 +70,108 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
   messageService = inject(MessageService);
   route = inject(ActivatedRoute);
   router = inject(Router);
+  ordenCompraService = inject(OrdenCompraService);
+  ordenVentaService = inject(OrdenVentaService);
+  datePipe = inject(DatePipe);
 
   productsRx = rxResource({
     loader: () => this.productoService.getProductos(),
   });
-
   ubicacionesRx = rxResource({
     loader: () => this.ubicacionService.getAll(),
   });
 
-  constructor() {
-    effect(() => {
-      const products = this.productsRx.value() || [];
-      const ubicaciones = this.ubicacionesRx.value() || [];
+  productos = computed(() => {
+    return this.productsRx.value() || [];
+  });
 
-      this.movimientoCols = [
-        {
-          field: 'producto',
-          header: 'Producto',
-          type: 'select',
-          options: products,
-          optionLabel: 'nombre',
-          required: true,
-          style: 'min-width: 150px',
-        },
-        {
-          field: 'ubicacion',
-          header: 'Ubicación',
-          type: 'select',
-          options: ubicaciones,
-          optionLabel: 'nombre',
-          required: true,
-          style: 'min-width: 150px',
-        },
-        {
-          field: 'tipoMovimiento',
-          header: 'Tipo Movimiento',
-          type: 'select',
-          options: this.listEstadosInventario.map((e) => ({
-            label: e,
-            value: e,
-          })),
-          optionLabel: 'label',
-          optionValue: 'value',
-          required: true,
-          showTag: true,
-          style: 'min-width: 100px',
-        },
-        {
-          field: 'cantidad',
-          header: 'Cantidad',
-          type: 'number',
-          required: true,
-          style: 'width: 150px',
-        },
-        {
-          field: 'motivo',
-          header: 'Motivo',
-          type: 'text',
-          style: 'min-width: 150px',
-        },
-        {
-          field: 'referencia',
-          header: 'Referencia',
-          type: 'text',
-          style: 'min-width: 150px',
-        },
-        {
-          field: 'fechaMovimiento',
-          header: 'Fecha Movimiento',
-          type: 'date',
-          style: 'min-width: 170px',
-        },
-        {
-          field: 'notas',
-          header: 'Notas',
-          type: 'text',
-          style: 'min-width: 150px',
-        },
-      ];
-    });
-  }
+  ubicaciones = computed(() => {
+    return this.ubicacionesRx.value() || [];
+  });
+
+  movimientoCols = computed<EditableColumn[]>(() => {
+    const p = this.productos();
+    const u = this.ubicaciones();
+    const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
+    console.log('returnTo', returnTo);
+    const estados = returnTo
+      ? listEstadosMovInventarioMes
+      : listEstadosMovInventario;
+    this.showBuscarOrdenes = !returnTo;
+
+    return [
+      {
+        field: 'producto',
+        header: 'Producto',
+        type: 'select',
+        options: p,
+        optionLabel: 'nombre',
+        required: true,
+        style: 'min-width: 150px',
+      },
+      {
+        field: 'ubicacion',
+        header: 'Ubicación',
+        type: 'select',
+        options: u,
+        optionLabel: 'nombre',
+        required: true,
+        style: 'min-width: 150px',
+      },
+      {
+        field: 'tipoMovimiento',
+        header: 'Tipo Movimiento',
+        type: 'select',
+        options: estados.map((e) => ({
+          label: e,
+          value: e,
+        })),
+        optionLabel: 'label',
+        optionValue: 'value',
+        required: true,
+        showTag: true,
+        style: 'min-width: 100px',
+      },
+      {
+        field: 'cantidad',
+        header: 'Cantidad',
+        type: 'number',
+        required: true,
+        style: 'width: 150px',
+      },
+      {
+        field: 'motivo',
+        header: 'Motivo',
+        type: 'text',
+        style: 'min-width: 150px',
+      },
+      {
+        field: 'referencia',
+        header: 'Referencia',
+        type: 'text',
+        style: 'min-width: 150px',
+      },
+      {
+        field: 'fechaMovimiento',
+        header: 'Fecha Movimiento',
+        type: 'date',
+        style: 'min-width: 170px',
+      },
+      {
+        field: 'notas',
+        header: 'Notas',
+        type: 'text',
+        style: 'min-width: 150px',
+      },
+    ];
+  });
 
   ngOnInit() {
-    // Initialize with one empty row or load existing
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
         this.loadMovimiento(+id);
       } else {
-        // Start with one empty row
         this.addMovimiento();
       }
     });
@@ -149,7 +180,19 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
   loadMovimiento(id: number) {
     this.movimientoService.getById(id).subscribe({
       next: (movimiento) => {
-        this.movimientos = [movimiento];
+        const parsed = movimiento?.fechaMovimiento
+          ? new Date(movimiento.fechaMovimiento as any)
+          : null;
+        const formatted =
+          parsed && !Number.isNaN(parsed.getTime())
+            ? this.datePipe.transform(parsed, 'dd/MM/yyyy')
+            : null;
+        this.movimientos = [
+          {
+            ...movimiento,
+            fechaMovimiento: formatted ?? movimiento.fechaMovimiento,
+          },
+        ];
       },
       error: () => {
         this.messageService.add({
@@ -163,9 +206,9 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
 
   addMovimiento() {
     const newMov = new MovimientoInventario();
-    // Use negative ID for temporary tracking
-    newMov.id = -Date.now();
-    newMov.fechaMovimiento = new Date().toISOString();
+    newMov.nroItemTemp = ++this.nroItemTemp;
+    const now = new Date();
+    newMov.fechaMovimiento = this.datePipe.transform(now, 'dd/MM/yyyy');
     this.movimientos = [...this.movimientos, newMov];
   }
 
@@ -193,14 +236,12 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
         },
       });
     } else {
-      // Just remove from array if not saved yet
       this.movimientos = this.movimientos.filter((m) => m !== item);
     }
   }
 
-  // Table Edit Handlers
   onRowEditInit(movimiento: MovimientoInventario) {
-    const key = movimiento.id ? movimiento.id.toString() : '';
+    const key = movimiento.nroItemTemp?.toString() || '';
     this.clonedMovimientos[key] = { ...movimiento };
   }
 
@@ -220,7 +261,7 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
       return;
     }
 
-    const key = movimiento.id ? movimiento.id.toString() : '';
+    const key = movimiento.nroItemTemp?.toString() || '';
     if (this.clonedMovimientos[key]) {
       delete this.clonedMovimientos[key];
     }
@@ -228,7 +269,7 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
 
   onRowEditCancel(event: { data: MovimientoInventario; index: number }) {
     const movimiento = event.data;
-    const key = movimiento.id ? movimiento.id.toString() : '';
+    const key = movimiento.nroItemTemp?.toString() || '';
     if (this.clonedMovimientos[key]) {
       this.movimientos[event.index] = this.clonedMovimientos[key];
       delete this.clonedMovimientos[key];
@@ -248,7 +289,6 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
   save() {
     if (this.isSaving) return;
 
-    // Filter valid movements to save
     const movimientosToSave = this.movimientos.filter(
       (m) => m.producto && m.ubicacion && m.cantidad && m.tipoMovimiento,
     );
@@ -272,16 +312,25 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
 
       let request;
       if (movimiento.id && movimiento.id > 0) {
-        request = this.movimientoService.update(movimiento);
+        const movToSave = { ...movimiento };
+        movToSave.fechaMovimiento = this.toBackendFechaMovimiento(
+          movToSave.fechaMovimiento,
+        );
+        request = this.movimientoService.update(movToSave);
       } else {
-        // Create copy for request with null ID
         const movToSave = { ...movimiento, id: null };
+        movToSave.fechaMovimiento = this.toBackendFechaMovimiento(
+          movToSave.fechaMovimiento,
+        );
         request = this.movimientoService.create(movToSave);
       }
 
       request.subscribe({
         next: (savedMov) => {
           Object.assign(movimiento, savedMov);
+          movimiento.fechaMovimiento = this.toDisplayFechaMovimiento(
+            movimiento.fechaMovimiento,
+          );
           completed++;
           this.checkCompletion(completed, errors, total);
         },
@@ -292,6 +341,33 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
         },
       });
     });
+  }
+
+  private toBackendFechaMovimiento(
+    value: string | null | undefined,
+  ): string | null {
+    if (!value) return null;
+    const parts = value.split('/');
+    if (parts.length !== 3) return value;
+
+    const day = Number(parts[0]);
+    const month = Number(parts[1]);
+    const yearRaw = Number(parts[2]);
+    const year = parts[2].length === 2 ? 2000 + yearRaw : yearRaw;
+
+    const date = new Date(year, month - 1, day, 0, 0, 0);
+    if (Number.isNaN(date.getTime())) return value;
+    return this.datePipe.transform(date, "yyyy-MM-dd'T'HH:mm:ss");
+  }
+
+  private toDisplayFechaMovimiento(value: any): string | null {
+    if (!value) return null;
+    if (typeof value !== 'string') return value;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) return value;
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return this.datePipe.transform(date, 'dd/MM/yyyy') ?? value;
   }
 
   private checkCompletion(completed: number, errors: number, total: number) {
@@ -324,5 +400,155 @@ export class RegeditMovimientoInventarioComponent implements OnInit {
         }, 1000);
       }
     }
+  }
+
+  buscarOrdenes() {
+    this.ordenesDialogVisible = true;
+    this.ordenesDialogLoading = true;
+
+    forkJoin({
+      compras: this.ordenCompraService.getPendientesRecepcion(),
+      ventas: this.ordenVentaService.getPendientesDespacho(),
+    }).subscribe({
+      next: ({ compras, ventas }) => {
+        console.log('Órdenes de compra pendientes:', compras);
+        console.log('Órdenes de venta pendientes:', ventas);
+        this.ordenesCompraPendientes = compras ?? [];
+        this.ordenesVentaPendientes = ventas ?? [];
+        this.ordenesDialogTab =
+          this.ordenesCompraPendientes.length > 0 ? 'compras' : 'ventas';
+        this.ordenesDialogLoading = false;
+      },
+      error: () => {
+        this.ordenesDialogLoading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron obtener las órdenes pendientes',
+        });
+      },
+    });
+  }
+
+  seleccionarOrdenCompra(orden: OrdenCompra) {
+    const id = orden?.id;
+    if (!id) return;
+
+    this.ordenesDialogLoading = true;
+    this.ordenCompraService.getOrdenCompraById(id).subscribe({
+      next: (oc) => {
+        this.cargarMovimientosDesdeCompra(oc);
+        this.ordenesDialogVisible = false;
+        this.ordenesDialogLoading = false;
+      },
+      error: () => {
+        this.ordenesDialogLoading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo cargar el detalle de la orden de compra',
+        });
+      },
+    });
+  }
+
+  seleccionarOrdenVenta(orden: OrdenVenta) {
+    const id = orden?.id;
+    if (!id) return;
+
+    this.ordenesDialogLoading = true;
+    this.ordenVentaService.getOrdenVentaById(id).subscribe({
+      next: (ov) => {
+        this.cargarMovimientosDesdeVenta(ov);
+        this.ordenesDialogVisible = false;
+        this.ordenesDialogLoading = false;
+      },
+      error: () => {
+        this.ordenesDialogLoading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo cargar el detalle de la orden de venta',
+        });
+      },
+    });
+  }
+
+  private cargarMovimientosDesdeCompra(oc: OrdenCompra) {
+    const detalles = oc.detallesOrdenCompra ?? [];
+    const movimientosNuevos = detalles
+      .filter((d) => d?.producto && d?.cantidad)
+      .map((d) => {
+        const m = new MovimientoInventario();
+        m.nroItemTemp = ++this.nroItemTemp;
+        m.producto = d.producto;
+        m.cantidad = d.cantidad;
+        m.tipoMovimiento = EstadosMovInventario.ENTRADA;
+        m.motivo = 'Recepción de Orden de Compra';
+        m.referencia = oc.numeroOrden;
+        m.fechaMovimiento = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
+        m.notas = oc.notas;
+        return m;
+      });
+
+    if (movimientosNuevos.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atención',
+        detail: 'La orden no tiene detalles para generar movimientos',
+      });
+      return;
+    }
+
+    if (this.deberiaReemplazarMovimientos()) {
+      this.movimientos = movimientosNuevos;
+    } else {
+      this.movimientos = [...this.movimientos, ...movimientosNuevos];
+    }
+  }
+
+  private cargarMovimientosDesdeVenta(ov: OrdenVenta) {
+    const detalles = ov.detallesOrdenVenta ?? [];
+    const movimientosNuevos = detalles
+      .filter((d) => d?.producto && d?.cantidad)
+      .map((d) => {
+        const m = new MovimientoInventario();
+        m.nroItemTemp = ++this.nroItemTemp;
+        m.producto = d.producto;
+        m.cantidad = d.cantidad;
+        m.tipoMovimiento = EstadosMovInventario.SALIDA;
+        m.motivo = 'Despacho de Orden de Venta';
+        m.referencia = ov.numeroOrden;
+        m.fechaMovimiento = this.datePipe.transform(new Date(), 'dd/MM/yyyy');
+        return m;
+      });
+
+    if (movimientosNuevos.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Atención',
+        detail: 'La orden no tiene detalles para generar movimientos',
+      });
+      return;
+    }
+
+    if (this.deberiaReemplazarMovimientos()) {
+      this.movimientos = movimientosNuevos;
+    } else {
+      this.movimientos = [...this.movimientos, ...movimientosNuevos];
+    }
+  }
+
+  private deberiaReemplazarMovimientos(): boolean {
+    if (this.movimientos.length !== 1) return false;
+    const m = this.movimientos[0];
+    return (
+      !m?.producto &&
+      !m?.ubicacion &&
+      !m?.cantidad &&
+      !m?.tipoMovimiento &&
+      !m?.motivo &&
+      !m?.referencia
+    );
   }
 }

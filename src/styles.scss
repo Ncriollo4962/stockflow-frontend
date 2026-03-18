@@ -78,3 +78,7 @@ body {
     border-color: #38bdf8; /* sky-400 */
   }
 }
+
+.datatable-paginator-right .p-paginator {
+  justify-content: flex-end;
+}

@@ -13,17 +13,29 @@
     <app-editable-table
       [header]="'Detalle de Movimientos'"
       [data]="movimientos"
-      [cols]="movimientoCols"
-      dataKey="id"
+      [cols]="movimientoCols()"
+      dataKey="nroItemTemp"
       (rowEditInit)="onRowEditInit($event)"
       (rowEditSave)="onRowEditSave($event)"
       (rowEditCancel)="onRowEditCancel($event)"
       (rowAdd)="onRowAdd()"
       (rowDelete)="onRowDelete($event)"
       [dialogVisible]="visible"
+      [showBuscarOrdenes]="showBuscarOrdenes"
       (dialogVisibleChange)="visible = $event; visibleChange.emit($event)"
+      (buscarOrdenes)="buscarOrdenes()"
     ></app-editable-table>
   </div>
+
+  <app-dialog-ordenes-pendientes
+    [(visible)]="ordenesDialogVisible"
+    [loading]="ordenesDialogLoading"
+    [ordenesCompra]="ordenesCompraPendientes"
+    [ordenesVenta]="ordenesVentaPendientes"
+    [(tab)]="ordenesDialogTab"
+    (seleccionarCompra)="seleccionarOrdenCompra($event)"
+    (seleccionarVenta)="seleccionarOrdenVenta($event)"
+  ></app-dialog-ordenes-pendientes>
 
   <div class="flex-none flex justify-end mt-2 gap-2 p-2 bg-[var(--card-bg)]">
       <button

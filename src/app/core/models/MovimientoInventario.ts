@@ -3,6 +3,7 @@ import { Producto } from './Producto';
 import { Ubicacion } from './Ubicacion';
 
 export class MovimientoInventario {
+  public nroItemTemp: number | null = null;
   public id: number | null = null;
   public producto: Producto | null = null;
   public ubicacion: Ubicacion | null = null;

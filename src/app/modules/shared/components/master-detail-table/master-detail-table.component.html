@@ -1,0 +1,171 @@
+<div class="card shadow-sm text-text-main h-full px-6 py-2">
+  <p-table
+    #dt
+    [value]="data"
+    [rows]="rows"
+    [paginator]="paginator"
+    [globalFilterFields]="globalFilterFields"
+    [tableStyle]="{ 'min-width': '75rem', width: '100%', 'table-layout': 'fixed' }"
+    styleClass="datatable-paginator-right"
+    [rowHover]="true"
+    [dataKey]="dataKey"
+    [loading]="loading"
+    [expandedRowKeys]="expandedRowKeys"
+  >
+    <ng-template #caption>
+      <div class="flex items-center justify-between">
+        <span></span>
+        <p-iconfield *ngIf="showGlobalFilter">
+          <p-inputicon styleClass="pi pi-search" />
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            placeholder="Buscar..."
+          />
+        </p-iconfield>
+      </div>
+    </ng-template>
+
+    <ng-template #header>
+      <tr>
+        <th style="width: 3rem" scope="col"></th>
+        <th
+          *ngFor="let col of cols"
+          [pSortableColumn]="col.field"
+          [ngStyle]="col.style || null"
+          scope="col"
+        >
+          {{ col.header }}
+          <p-sortIcon [field]="col.field" />
+        </th>
+        <th style="min-width: 12rem" scope="col">Acciones</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-rowData>
+      <tr>
+        <td style="width: 3rem">
+          <button
+            pButton
+            type="button"
+            [icon]="expandedRowKeys[(getFieldValue(rowData, dataKey) + '')] ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+            [text]="true"
+            [rounded]="true"
+            (click)="toggleRow(rowData)"
+          ></button>
+        </td>
+        <td *ngFor="let col of cols" [ngStyle]="col.style || null">
+          <ng-container [ngSwitch]="col.type">
+            <span *ngSwitchCase="'currency'">
+              {{ getFieldValue(rowData, col.field) | currency: 'PEN':'S/ ' }}
+            </span>
+            <span *ngSwitchCase="'date'">
+              {{ getFieldValue(rowData, col.field) | date: 'dd/MM/yyyy' }}
+            </span>
+            <span *ngSwitchCase="'tag'">
+              <p-tag
+                [value]="getFieldValue(rowData, col.field)"
+                [severity]="col.tagSeverity ? col.tagSeverity(getFieldValue(rowData, col.field)) : undefined"
+              />
+            </span>
+            <span *ngSwitchCase="'percent'">
+              {{ getFieldValue(rowData, col.field) | number: '1.2-2' }}<ng-container
+                *ngIf="getFieldValue(rowData, col.field) !== null && getFieldValue(rowData, col.field) !== undefined"
+                >%</ng-container
+              >
+            </span>
+            <span *ngSwitchCase="'%'">
+              {{ getFieldValue(rowData, col.field) | number: '1.2-2' }}<ng-container
+                *ngIf="getFieldValue(rowData, col.field) !== null && getFieldValue(rowData, col.field) !== undefined"
+                >%</ng-container
+              >
+            </span>
+            <span *ngSwitchCase="'number'">
+              {{ getFieldValue(rowData, col.field) | number: '1.2-2' }}
+            </span>
+            <span *ngSwitchDefault>
+              {{ getFieldValue(rowData, col.field) }}
+            </span>
+          </ng-container>
+        </td>
+        <td>
+          <p-button
+            [label]="actionLabel"
+            [icon]="actionIcon"
+            [severity]="$any(actionSeverity)"
+            [disabled]="actionDisabled || loading"
+            (onClick)="onAction(rowData)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #expandedrow let-rowData>
+      <tr>
+        <td [attr.colspan]="cols.length + 2">
+          <div class="py-2">
+            <p-table
+              [value]="getDetails(rowData)"
+              [rows]="10"
+              [paginator]="false"
+              [tableStyle]="{ width: '100%' }"
+              styleClass="p-datatable-sm"
+              [rowHover]="true"
+              [loading]="loading"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th *ngFor="let dcol of detailsCols" [ngStyle]="dcol.style || null">
+                    {{ dcol.header }}
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-det>
+                <tr>
+                  <td *ngFor="let dcol of detailsCols" [ngStyle]="dcol.style || null">
+                    <ng-container [ngSwitch]="dcol.type">
+                      <span *ngSwitchCase="'currency'">
+                        {{ getFieldValue(det, dcol.field) | currency: 'PEN':'S/ ' }}
+                      </span>
+                      <span *ngSwitchCase="'date'">
+                        {{ getFieldValue(det, dcol.field) | date: 'dd/MM/yyyy' }}
+                      </span>
+                      <span *ngSwitchCase="'tag'">
+                        <p-tag
+                          [value]="getFieldValue(det, dcol.field)"
+                          [severity]="dcol.tagSeverity ? dcol.tagSeverity(getFieldValue(det, dcol.field)) : undefined"
+                        />
+                      </span>
+                      <span *ngSwitchCase="'number'">
+                        {{ getFieldValue(det, dcol.field) | number: '1.2-2' }}
+                      </span>
+                      <span *ngSwitchDefault>
+                        {{ getFieldValue(det, dcol.field) }}
+                      </span>
+                    </ng-container>
+                  </td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td [attr.colspan]="detailsCols.length" class="text-center text-surface-500">
+                    Sin detalles
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="cols.length + 2" class="text-center text-surface-500">
+          Sin registros
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

@@ -13,6 +13,7 @@
   <ng-template pTemplate="caption">
     <div class="flex items-center justify-between">
       <p-button
+      *ngIf="showBuscarOrdenes"
         pButton
         type="button"
         label="Ordenes"
@@ -33,7 +34,7 @@
 
   <ng-template pTemplate="header">
     <tr>
-      <th id="id" *ngFor="let col of cols" [style]="col.style || 'width:20%'">
+      <th id="nroItemTemp" *ngFor="let col of cols" [style]="col.style || 'width:20%'">
         {{ col.header }}
       </th>
       <th id="actions" style="width:20%">Actions</th>
@@ -85,7 +86,8 @@
                 *ngSwitchCase="'date'"
                 [(ngModel)]="rowData[col.field]"
                 appendTo="body"
-                dateFormat="yy-mm-dd"
+                dateFormat="dd/mm/yy"
+                dataType="string"
                 [showIcon]="true"
                 [required]="col.required || false"
                 class="w-full"
@@ -99,7 +101,7 @@
               <span *ngSwitchCase="'currency'">{{
                 rowData[col.field] | currency: 'PEN'
               }}</span>
-              <span *ngSwitchCase="'date'">{{ rowData[col.field] | date:'yyyy-MM-dd' }}</span>
+              <span *ngSwitchCase="'date'">{{ rowData[col.field] }}</span>
               <ng-container *ngSwitchCase="'select'">
               <p-tag
                 *ngIf="col.showTag; else plainText"

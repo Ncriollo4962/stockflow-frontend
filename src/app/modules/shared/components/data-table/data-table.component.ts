@@ -11,7 +11,8 @@ import { ImportsModule } from '../../../../imports';
 export interface Column {
   field: string;
   header: string;
-  type?: 'text' | 'currency' | 'date' | 'tag';
+  type?: 'text' | 'currency' | 'date' | 'tag' | 'percent' | '%' | 'number';
+  style?: Record<string, any> | null;
   tagSeverity?: (
     value: any,
   ) =>
@@ -34,8 +35,14 @@ export class DataTableComponent {
   @Input() data: any[] = [];
   @Input() cols: Column[] = [];
   @Input() selection: any[] | null = [];
-  @Input() dataKey: string = 'id';
+  @Input() dataKey: string = '';
   @Input() globalFilterFields: string[] = [];
+  @Input() showGlobalFilter: boolean = true;
+  @Input() showSelection: boolean = true;
+  @Input() showExportPdf: boolean = false;
+  @Input() showExportExcel: boolean = false;
+  @Output() exportExcel = new EventEmitter<void>();
+  @Output() exportPdf = new EventEmitter<void>();
   @Input() title: string = '';
   @Input() loading: boolean = false;
   @Input() rows: number = 10;
@@ -48,6 +55,16 @@ export class DataTableComponent {
   @Input() showEdit: boolean = true;
   @Input() showDelete: boolean = true;
 
+  @Input() rowClass: ((rowData: any) => any) | null = null;
+  @Input() rowStyle: ((rowData: any) => Record<string, any> | null) | null =
+    null;
+
+  @Input() cellClass: ((rowData: any, col: Column, value: any) => any) | null =
+    null;
+  @Input() cellStyle:
+    | ((rowData: any, col: Column, value: any) => Record<string, any> | null)
+    | null = null;
+
   @Output() selectionChange = new EventEmitter<any[] | null>();
   @Output() shouldonCreate = new EventEmitter<void>();
   @Output() shouldonEdit = new EventEmitter<any>();
@@ -56,12 +73,26 @@ export class DataTableComponent {
 
   @ViewChild('dt') dt: Table | undefined;
 
+  getNormalizedColStyle(col: Column): Record<string, any> | null {
+    const style = col.style ?? null;
+    if (!style) return null;
+
+    const width = style['width'] ?? style['max-width'] ?? style['min-width'];
+    if (!width) return style;
+
+    return {
+      ...style,
+      'min-width': style['min-width'] ?? width,
+      'max-width': style['max-width'] ?? width,
+      width: style['width'] ?? width,
+    };
+  }
+
   onSelectionChange(value: any[] | null) {
     this.selection = value;
     this.selectionChange.emit(value);
   }
 
-  // Función auxiliar para obtener valores anidados (ej: 'producto.nombre')
   getFieldValue(rowData: any, field: string): any {
     if (!rowData) return '';
     const fields = field.split('.');
@@ -76,5 +107,12 @@ export class DataTableComponent {
     if (this.selection && this.selection.length > 0) {
       this.shouldonDeleteSelected.emit(this.selection);
     }
+  }
+
+  onExportExcel() {
+    this.exportExcel.emit();
+  }
+  onExportPdf() {
+    this.exportPdf.emit();
   }
 }

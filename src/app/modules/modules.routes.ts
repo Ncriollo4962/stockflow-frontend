@@ -34,6 +34,13 @@ export const modulesRoutes: Routes = [
           import('./ventas/ventas.routes').then((m) => m.ventasModulesRoutes),
       },
       {
+        path: 'reportes',
+        loadChildren: () =>
+          import('./reportes/reportes.routes').then(
+            (m) => m.reportesModulesRoutes,
+          ),
+      },
+      {
         path: 'usuarios',
         canMatch: [RoleGuardCanMatch],
         data: { roles: ['ROLE_ADMIN_TI'] },
