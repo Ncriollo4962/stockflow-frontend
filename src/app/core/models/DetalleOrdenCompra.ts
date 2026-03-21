@@ -7,6 +7,9 @@ export class DetalleOrdenCompra {
   public ordenCompra: OrdenCompra | null = null;
   public producto: Producto | null = null;
   public cantidad: number | null = null;
+  public cantidadRecibida: number = 0;
+  public cantidadPendiente: number | null = null;
+  public estadoDetalle: string | null = null;
   public precioUnitario: number | null = null;
   public subtotal: number | null = null; // solo lectura
 }

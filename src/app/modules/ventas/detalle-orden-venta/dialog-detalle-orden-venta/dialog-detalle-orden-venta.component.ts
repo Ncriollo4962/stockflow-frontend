@@ -55,6 +55,9 @@ export class DialogDetalleOrdenVentaComponent implements OnInit {
       nroItemTemp: [null],
       producto: [null, Validators.required],
       cantidad: [1, [Validators.required, Validators.min(1)]],
+      cantidadDespachada: [0, [Validators.min(0)]],
+      cantidadPendiente: [null],
+      estadoDetalle: ['Pendiente Despacho'],
       precioUnitario: [0, [Validators.required, Validators.min(0)]],
       subtotal: [{ value: 0, disabled: true }], // Solo lectura
     });
@@ -92,12 +95,22 @@ export class DialogDetalleOrdenVentaComponent implements OnInit {
         ordenVenta: null,
         producto: productoSeleccionado,
         cantidad: rawValue.cantidad,
+        cantidadDespachada: rawValue.cantidadDespachada ?? 0,
+        cantidadPendiente: rawValue.cantidadPendiente ?? null,
+        estadoDetalle: rawValue.estadoDetalle ?? 'Pendiente Despacho',
         precioUnitario: rawValue.precioUnitario,
         subtotal: rawValue.cantidad * rawValue.precioUnitario,
       };
       this.shouldNewDetalle.emit(this.detalle);
       this.hideDialog();
-      this.detalleForm.reset({ cantidad: 1, precioUnitario: 0, id: null });
+      this.detalleForm.reset({
+        cantidad: 1,
+        precioUnitario: 0,
+        id: null,
+        cantidadDespachada: 0,
+        cantidadPendiente: null,
+        estadoDetalle: 'Pendiente Despacho',
+      });
     } else {
       this.detalleForm.markAllAsTouched();
     }

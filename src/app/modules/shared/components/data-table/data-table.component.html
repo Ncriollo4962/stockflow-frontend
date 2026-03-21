@@ -14,7 +14,7 @@
         [dataKey]="dataKey"
         [currentPageReportTemplate]="currentPageReportTemplate"
         [showCurrentPageReport]="showCurrentPageReport"
-        [loading]="loading"
+        [loading]="loading && !globalLoading()"
     >
         <ng-template #caption>
             <div class="flex items-center justify-between">
