@@ -56,7 +56,7 @@ export class VentasComponent implements OnInit {
       { field: 'clienteNombre', header: 'Cliente' },
       { field: 'fechaVenta', header: 'Fecha Venta', type: 'date' },
       { field: 'totalVenta', header: 'Total', type: 'currency' },
-      { field: 'usuario.username', header: 'Vendedor' },
+      { field: 'usuario.nombre', header: 'Vendedor' },
       {
         field: 'estado',
         header: 'Estado',
