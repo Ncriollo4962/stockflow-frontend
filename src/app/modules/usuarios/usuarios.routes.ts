@@ -5,4 +5,18 @@ export const modulesRoutes: Routes = [
     loadComponent: () =>
       import('./usuarios.component').then((m) => m.UsuariosComponent),
   },
+  {
+    path: 'newUsuario',
+    loadComponent: () =>
+      import('./regedit-usuario/regedit-usuario.component').then(
+        (m) => m.RegeditUsuarioComponent
+      ),
+  },
+  {
+    path: 'editUsuario/:id',
+    loadComponent: () =>
+      import('./regedit-usuario/regedit-usuario.component').then(
+        (m) => m.RegeditUsuarioComponent
+      ),
+  },
 ];
