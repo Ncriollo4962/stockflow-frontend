@@ -89,7 +89,17 @@ export class DetalleOrdenCompraComponent implements OnInit {
     this.calcularNroItemTemp();
     this.dialogDetalle.productDialog = true;
     this.dialogDetalle.submitted = false;
-    this.dialogDetalle.detalleForm.reset();
+    this.dialogDetalle.detalleForm.reset({
+      id: null,
+      nroItemTemp: null,
+      producto: null,
+      cantidad: 1,
+      cantidadRecibida: 0,
+      cantidadPendiente: null,
+      estadoDetalle: 'Pendiente Recepción',
+      precioUnitario: 0,
+      subtotal: 0,
+    });
     this.dialogDetalle.detalleForm
       .get('nroItemTemp')
       ?.setValue(this.nroItemTemp);
@@ -102,6 +112,9 @@ export class DetalleOrdenCompraComponent implements OnInit {
       nroItemTemp: detalle.nroItemTemp,
       producto: detalle.producto,
       cantidad: detalle.cantidad,
+      cantidadRecibida: detalle.cantidadRecibida ?? 0,
+      cantidadPendiente: detalle.cantidadPendiente ?? null,
+      estadoDetalle: detalle.estadoDetalle ?? 'Pendiente Recepción',
       precioUnitario: detalle.precioUnitario,
       subtotal: detalle.subtotal,
     });

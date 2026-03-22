@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ThemeService } from '../../../../../core/services/theme.service';
+import { GlobalLoadingComponent } from '../../global-loading/global-loading.component';
 import { ConfigPanelComponent } from '../../config-panel/config-panel.component';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
 import { TopbarComponent } from '../../topbar/topbar.component';
@@ -14,6 +15,7 @@ import { TopbarComponent } from '../../topbar/topbar.component';
     TopbarComponent,
     SidebarComponent,
     ConfigPanelComponent,
+    GlobalLoadingComponent,
   ],
   templateUrl: './main-layout.component.html',
 })

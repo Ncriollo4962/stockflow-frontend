@@ -59,6 +59,14 @@ export class DialogOrdenesPendientesComponent {
     { field: 'producto.codigo', header: 'Código', type: 'text' },
     { field: 'producto.nombre', header: 'Producto', type: 'text' },
     { field: 'cantidad', header: 'Cantidad', type: 'number' },
+    { field: 'cantidadRecibida', header: 'Recibida', type: 'number' },
+    { field: 'cantidadPendiente', header: 'Pendiente', type: 'number' },
+    {
+      field: 'estadoDetalle',
+      header: 'Estado',
+      type: 'tag',
+      tagSeverity: (v) => this.estadoOrdenSeverityPipe.transform(v),
+    },
     { field: 'precioUnitario', header: 'P. Unitario', type: 'currency' },
     { field: 'subtotal', header: 'Subtotal', type: 'currency' },
   ];
@@ -67,6 +75,14 @@ export class DialogOrdenesPendientesComponent {
     { field: 'producto.codigo', header: 'Código', type: 'text' },
     { field: 'producto.nombre', header: 'Producto', type: 'text' },
     { field: 'cantidad', header: 'Cantidad', type: 'number' },
+    { field: 'cantidadDespachada', header: 'Despachada', type: 'number' },
+    { field: 'cantidadPendiente', header: 'Pendiente', type: 'number' },
+    {
+      field: 'estadoDetalle',
+      header: 'Estado',
+      type: 'tag',
+      tagSeverity: (v) => this.estadoOrdenSeverityPipe.transform(v),
+    },
     { field: 'precioUnitario', header: 'P. Unitario', type: 'currency' },
     { field: 'subtotal', header: 'Subtotal', type: 'currency' },
   ];

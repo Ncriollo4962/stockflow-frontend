@@ -9,4 +9,7 @@ export class DetalleOrdenVenta {
   public cantidad: number | null = null;
   public precioUnitario: number | null = null;
   public subtotal: number | null = null; // solo lectura
+  public cantidadDespachada: number | null = null;
+  public cantidadPendiente: number | null = null;
+  public estadoDetalle: string | null = null;
 }

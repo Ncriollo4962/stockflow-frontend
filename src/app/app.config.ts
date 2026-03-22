@@ -8,6 +8,7 @@ import {
   withInterceptors,
 } from '@angular/common/http';
 import { authInterceptor } from './core/auth/interceptors/auth.interceptor';
+import { loadingInterceptor } from './core/auth/interceptors/loading.interceptor';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { definePreset } from '@primeng/themes';
@@ -36,7 +37,10 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([loadingInterceptor, authInterceptor]),
+    ),
     provideAnimationsAsync(),
     MessageService,
     providePrimeNG({

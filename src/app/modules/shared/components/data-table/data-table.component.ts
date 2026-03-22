@@ -1,12 +1,14 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   Output,
   ViewChild,
 } from '@angular/core';
 import { Table } from 'primeng/table';
 import { ImportsModule } from '../../../../imports';
+import { GlobalLoadingService } from '../../../../core/services/global-loading.service';
 
 export interface Column {
   field: string;
@@ -45,6 +47,7 @@ export class DataTableComponent {
   @Output() exportPdf = new EventEmitter<void>();
   @Input() title: string = '';
   @Input() loading: boolean = false;
+  globalLoading = inject(GlobalLoadingService).isLoading;
   @Input() rows: number = 10;
   @Input() paginator: boolean = true;
   @Input() showCurrentPageReport: boolean = true;

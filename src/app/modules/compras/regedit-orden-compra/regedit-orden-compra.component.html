@@ -47,13 +47,6 @@
                         inputStyleClass="h-11 input-custom-border"></p-datepicker>
         </div>
 
-        <div class="flex flex-col gap-2 text-text-body">
-          <label for="fechaCreacion" class="font-semibold text-text-main">Fecha Creación</label>
-          <p class="p-2 border-1 border-surface-200 dark:border-surface-700 border-round bg-surface-50 dark:bg-surface-800 text-text-body">
-            {{ (form.get('fechaCreacion')?.value | date:'short') || 'Pendiente de guardado' }}
-          </p>
-        </div>
-
         <div class="flex flex-col gap-2">
           <label for="totalCompra" class="font-semibold text-text-main">Total de la Compra</label>
           <p-inputnumber #totalCompra formControlName="totalCompra"

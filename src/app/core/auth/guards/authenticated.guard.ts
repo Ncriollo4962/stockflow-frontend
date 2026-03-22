@@ -10,6 +10,8 @@ export const AuthenticatedGuardCanMatch: CanMatchFn = async (
   const authService = inject(AuthService);
   const router = inject(Router);
 
+  if (authService.authStatus() === 'authenticated') return true;
+
   const isAuthenticated = await firstValueFrom(authService.checkAuthStatus());
 
   if (!isAuthenticated) {

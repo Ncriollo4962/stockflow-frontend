@@ -9,7 +9,6 @@ export class OrdenCompra {
   public usuario: Usuario | null = null;
   public fechaOrdenCompra: string | null = null;
   public fechaEntrega: string | null = null;
-  public fechaCreacion: string | null = null; // solo lectura
   public estado: string | null = null;
   public totalCompra: number | null = null;
   public notas: string | null = null;

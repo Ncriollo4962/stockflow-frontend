@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import {
   Component,
   computed,
@@ -22,7 +21,7 @@ import { DetalleOrdenCompraComponent } from '../detalle-orden-compra/detalle-ord
 
 @Component({
   selector: 'app-regedit-orden-compra',
-  imports: [ImportsModule, DatePipe, DetalleOrdenCompraComponent],
+  imports: [ImportsModule, DetalleOrdenCompraComponent],
   templateUrl: './regedit-orden-compra.component.html',
 })
 export class RegeditOrdenCompraComponent implements OnInit {
@@ -98,9 +97,6 @@ export class RegeditOrdenCompraComponent implements OnInit {
           fechaEntrega: orden.fechaEntrega
             ? new Date(orden.fechaEntrega)
             : null,
-          fechaCreacion: orden.fechaCreacion
-            ? new Date(orden.fechaCreacion)
-            : null,
           totalCompra: orden.totalCompra,
           notas: orden.notas,
         });
@@ -129,7 +125,6 @@ export class RegeditOrdenCompraComponent implements OnInit {
       proveedor: [null, [Validators.required]],
       fechaOrdenCompra: [new Date(), [Validators.required]],
       fechaEntrega: [null],
-      fechaCreacion: [{ value: new Date(), disabled: true }],
       totalCompra: [{ value: 0, disabled: true }],
       notas: [''],
     });
@@ -239,9 +234,6 @@ export class RegeditOrdenCompraComponent implements OnInit {
               : null,
             fechaEntrega: response.fechaEntrega
               ? new Date(response.fechaEntrega)
-              : null,
-            fechaCreacion: response.fechaCreacion
-              ? new Date(response.fechaCreacion)
               : null,
             totalCompra: response.totalCompra,
             notas: response.notas,
