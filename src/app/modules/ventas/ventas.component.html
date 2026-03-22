@@ -1,1 +1,24 @@
-<p>ventas works!</p>
+<div class="card p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
+  <div class="flex-none flex flex-col gap-1 mb-4 px-4 pt-4">
+    <div class="flex items-center gap-2 text-primary">
+      <i class="pi pi-money-bill text-xl"></i>
+      <span class="text-xl font-semibold">Órdenes de Venta</span>
+    </div>
+    <span class="text-surface-500 dark:text-surface-400 text-sm">
+      Gestión de ventas a clientes
+    </span>
+  </div>
+
+  <p-confirmDialog />
+  <app-data-table
+    #dataTable
+    [data]="ordenesVenta"
+    [cols]="cols"
+    [globalFilterFields]="['numeroOrden', 'clienteNombre', 'fechaVenta', 'estado']"
+    [(selection)]="selectedOrdenes"
+    (shouldonCreate)="openNew()"
+    (shouldonEdit)="editOrden($event)"
+    (shouldonDelete)="deleteOrden($event)"
+    (shouldonDeleteSelected)="deleteSelectedOrdenes($event)"
+  ></app-data-table>
+</div>

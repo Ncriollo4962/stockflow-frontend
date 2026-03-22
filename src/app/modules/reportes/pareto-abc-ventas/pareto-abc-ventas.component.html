@@ -1,0 +1,160 @@
+<div class="card h-[calc(100vh-7rem)] flex flex-col  p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
+  <div class="flex-none flex flex-col gap-1 mb-4 px-4 pt-4">
+    <div class="flex items-center gap-2 text-primary">
+      <i class="pi pi-chart-line text-xl"></i>
+      <span class="text-xl font-semibold">Reportes</span>
+    </div>
+    <span class="text-surface-500 dark:text-surface-400 text-sm">
+      Reportes operativos y analíticos
+    </span>
+  </div>
+
+<p-card header="Filtros del Reporte" styleClass="mb-1">
+  <form
+    [formGroup]="filtroForm"
+    (ngSubmit)="generarReporte()"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 items-end"
+  >
+    <div class="flex flex-col gap-2">
+      <label for="desde">Fecha inicio</label>
+      <p-datePicker
+        formControlName="desde"
+        placeholder="Desde"
+        appendTo="body"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        class="w-full"
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="hasta">Fecha fin</label>
+      <p-datePicker
+        formControlName="hasta"
+        placeholder="Hasta"
+        appendTo="body"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        class="w-full"
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="categoria">Categoría</label>
+      <p-select
+        [options]="categorias"
+        formControlName="categoriaId"
+        optionLabel="nombre"
+        optionValue="id"
+        placeholder="Todas las categorías"
+        [showClear]="true"
+        class="w-full"
+      />
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="estado">Estado del Producto</label>
+      <p-select
+        [options]="estados"
+        formControlName="estado"
+        optionLabel="label"
+        optionValue="value"
+        [showClear]="true"
+        class="w-full"
+      />
+    </div>
+
+    <div class="xl:col-span-1">
+      <p-button
+        label="Generar Reporte"
+        icon="pi pi-search"
+        type="submit"
+        [loading]="loading"
+        class="w-full"
+      />
+    </div>
+  </form>
+</p-card>
+
+@if (reporteData !== null) {
+  <p-card [header]="reporteData?.reporte" styleClass="mb-1">
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <div class="flex items-center gap-2">
+            <i class="pi pi-tags text-primary"></i>
+            <span class="text-sm text-surface-500 dark:text-surface-400">Categoría</span>
+            <span class="text-sm font-semibold">{{ reporteData?.resumen?.categoria }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i class="pi pi-check-circle text-primary"></i>
+            <span class="text-sm text-surface-500 dark:text-surface-400">Estado</span>
+            <p-tag
+              [value]="reporteData?.resumen?.estado === null ? 'Todos' : (reporteData?.resumen?.estado ? 'Activos' : 'Inactivos')"
+              [severity]="reporteData?.resumen?.estado === true ? 'success' : (reporteData?.resumen?.estado === false ? 'secondary' : 'info')"
+            />
+          </div>
+        </div>
+        <div class="flex items-center gap-2 md:justify-end">
+          <i class="pi pi-calendar text-primary"></i>
+          <span class="text-sm text-surface-500 dark:text-surface-400">Generado</span>
+          <span class="text-sm font-semibold">
+            {{ reporteData?.fechaGeneracion }}
+          </span>
+        </div>
+        <div class="flex justify-end gap-2 px-4 pb-1">
+        <p-button
+            severity="success"
+            label="Excel"
+            icon="pi pi-file-excel"
+            class="mr-2"
+            outlined
+            (onClick)="exportExcel()" />
+        <p-button
+            severity="danger"
+            label="PDF"
+            icon="pi pi-file-pdf"
+            class="mr-2"
+            outlined
+            (onClick)="exportPdf()" />
+      </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        <div class="p-3 rounded-lg bg-surface-100 dark:bg-surface-800">
+          <div class="text-xs text-surface-500 dark:text-surface-400">Total items</div>
+          <div class="text-lg font-semibold">{{ reporteData?.resumen?.totalItems }}</div>
+        </div>
+        <div class="p-3 rounded-lg bg-surface-100 dark:bg-surface-800">
+          <div class="text-xs text-surface-500 dark:text-surface-400">Valor total</div>
+          <div class="text-lg font-semibold">
+            {{ reporteData?.resumen?.valorTotal | currency:(reporteData?.resumen?.moneda || 'PEN') }}
+          </div>
+        </div>
+        <div class="p-3 rounded-lg bg-surface-100 dark:bg-surface-800">
+          <div class="text-xs text-surface-500 dark:text-surface-400">Productos en riesgo</div>
+          <div class="text-lg font-semibold">{{ reporteData?.resumen?.productosEnRiesgo }}</div>
+        </div>
+        <div class="p-3 rounded-lg bg-surface-100 dark:bg-surface-800">
+          <div class="text-xs text-surface-500 dark:text-surface-400">Moneda</div>
+          <div class="text-lg font-semibold">{{ reporteData?.resumen?.moneda }}</div>
+        </div>
+      </div>
+    </div>
+  </p-card>
+  <div class="flex-1 overflow-auto min-h-0">
+  <app-data-table
+    [data]="this.reporteData?.data ?? []"
+    [cols]="columns"
+    [showGlobalFilter]="false"
+    [showExportExcel]="false"
+    [showExportPdf]="false"
+    [globalFilterFields]="['sku', 'nombre', 'categoria', 'clase']"
+    [showCreate]="false"
+    [showEdit]="false"
+    [showDelete]="false"
+    [loading]="loading"
+  />
+  </div>
+}
+</div>

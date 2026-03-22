@@ -1,0 +1,83 @@
+<div class="card p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
+  <div class="flex-none flex flex-col gap-1 mb-4 px-4 pt-4">
+    <div class="flex items-center gap-2 text-primary">
+      <i class="pi pi-money-bill text-xl"></i>
+      <span class="text-xl font-semibold">Registro de Orden de Venta</span>
+    </div>
+    <span class="text-surface-500 dark:text-surface-400 text-sm">
+      Crear o editar orden de venta
+    </span>
+  </div>
+
+  <form [formGroup]="form" class="grid grid-cols-1 px-6">
+      <p-fieldset legend="Datos de la Orden">
+        <div class="card grid grid-cols-4 md:grid-cols-2 lg:grid-cols-3 gap-4 px-6 py-4">
+          <div class="flex flex-col gap-2">
+            <label for="numeroOrden" class="font-semibold text-text-main">Número de Orden</label>
+            <input pInputText type="text" #numeroOrden formControlName="numeroOrden"
+                  placeholder="Ej: OV-2026-001" class="w-full h-11 input-custom-border" />
+          </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="estado" class="font-semibold text-text-main">Estado</label>
+          <p-select #estado formControlName="estado"
+                    [options]="estadosOrden" placeholder="Seleccione un estado"
+                    [fluid]="true" styleClass="h-11 flex items-center input-custom-border"></p-select>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="clienteNombre" class="font-semibold text-text-main">Cliente</label>
+          <input pInputText type="text" #clienteNombre formControlName="clienteNombre"
+                 placeholder="Nombre del Cliente" class="w-full h-11 input-custom-border" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="clienteEmail" class="font-semibold text-text-main">Email Cliente</label>
+            <input pInputText type="email" #clienteEmail formControlName="clienteEmail"
+                   placeholder="email@cliente.com" class="w-full h-11 input-custom-border" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="clienteTelefono" class="font-semibold text-text-main">Teléfono Cliente</label>
+            <input pInputText type="text" #clienteTelefono formControlName="clienteTelefono"
+                   placeholder="999-999-999" class="w-full h-11 input-custom-border" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="direccion" class="font-semibold text-text-main">Dirección</label>
+            <input pInputText type="text" #direccion formControlName="direccion"
+                   placeholder="Dirección de entrega" class="w-full h-11 input-custom-border" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="fechaVenta" class="font-semibold text-text-main">Fecha de Venta</label>
+          <p-datepicker #fechaVenta formControlName="fechaVenta"
+                        [showIcon]="true" [fluid]="true" styleClass="h-11"
+                        inputStyleClass="h-11 input-custom-border"></p-datepicker>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label for="totalVenta" class="font-semibold text-text-main">Total de la Venta</label>
+          <p-inputnumber #totalVenta formControlName="totalVenta"
+                        mode="currency" currency="PEN" locale="es-PE"
+                        [fluid]="true" inputStyleClass="h-11 input-custom-border"></p-inputnumber>
+        </div>
+
+      </div>
+      </p-fieldset>
+
+      <div class="flex flex-col gap-3 md:col-span-3 lg:col-span-3">
+          <p-fieldset legend="Detalles de la Orden">
+        <div class="grid grid-cols-1">
+          <app-detalle-orden-venta (totalCalculado)="actualizarTotalVenta($event)" (detallesChanged)="onDetallesChanged()"></app-detalle-orden-venta>
+        </div>
+        </p-fieldset>
+      </div>
+
+    <div class="md:col-span-2 lg:col-span-3 flex justify-end gap-2 mt-3">
+      <p-button label="Cerrar" icon="pi pi-times" severity="secondary" [outlined]="true" (onClick)="cancelarOrden()"></p-button>
+      <p-button [disabled]="btnSaveDisabled" label="Guardar Orden" icon="pi pi-check" severity="primary" (onClick)="guardarOrden()"></p-button>
+    </div>
+
+  </form>
+</div>

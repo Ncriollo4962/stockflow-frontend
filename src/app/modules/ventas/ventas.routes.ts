@@ -1,10 +1,23 @@
 import { Routes } from '@angular/router';
 
-export const modulesRoutes: Routes = [
+export const ventasModulesRoutes: Routes = [
   {
-    path: 'ventas',
+    path: '',
     loadComponent: () =>
       import('./ventas.component').then((m) => m.VentasComponent),
   },
-  { path: '', redirectTo: '', pathMatch: 'full' },
+  {
+    path: 'newOrdenVenta',
+    loadComponent: () =>
+      import('./regedit-orden-venta/regedit-orden-venta.component').then(
+        (m) => m.RegeditOrdenVentaComponent,
+      ),
+  },
+  {
+    path: 'editOrdenVenta/:id',
+    loadComponent: () =>
+      import('./regedit-orden-venta/regedit-orden-venta.component').then(
+        (m) => m.RegeditOrdenVentaComponent,
+      ),
+  },
 ];

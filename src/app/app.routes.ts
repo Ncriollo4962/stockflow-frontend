@@ -5,7 +5,8 @@ import { NotAuthenticatedGuardCanMatch } from './core/auth/guards/not-authentica
 export const routes: Routes = [
   {
     path: 'auth',
-    loadChildren: () => import('./core/auth/auth.routes'),
+    loadChildren: () =>
+      import('./core/auth/auth.routes').then((m) => m.authModulesRoutes),
     canMatch: [NotAuthenticatedGuardCanMatch],
   },
   {

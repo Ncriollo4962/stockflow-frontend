@@ -1,0 +1,166 @@
+<!-- <p-dialog
+    [header]="header"
+    [resizable]="false"
+    [modal]="true"
+    [maximizable]="true"
+    appendTo="body"
+    [visible]="dialogVisible"
+    (visibleChange)="dialogVisible = $event; dialogVisibleChange.emit($event)"
+    [style]="{ width: '90vw' }"
+    [contentStyle]="{ height: '400px' }"
+    > -->
+<p-table [value]="data" [dataKey]="dataKey" editMode="row" [tableStyle]="tableStyle">
+  <ng-template pTemplate="caption">
+    <div class="flex items-center justify-between">
+      <p-button
+      *ngIf="showBuscarOrdenes"
+        pButton
+        type="button"
+        label="Ordenes"
+        icon="pi pi-search"
+        severity="warn"
+        (onClick)="onBuscarOrdenesEmit()"
+        class="p-button-text p-button-rounded p-button-warn"
+      ></p-button>
+      <button
+        pButton
+        label="New"
+        icon="pi pi-plus"
+        class="p-button-text"
+        (click)="rowAdd.emit()"
+      ></button>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th id="nroItemTemp" *ngFor="let col of cols" [style]="col.style || 'width:20%'">
+        {{ col.header }}
+      </th>
+      <th id="actions" style="width:20%">Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+    <tr [pEditableRow]="rowData">
+      <td *ngFor="let col of cols" [style]="col.style">
+        <p-cellEditor>
+          <ng-template pTemplate="input">
+            <ng-container [ngSwitch]="col.type">
+              <input
+                *ngSwitchCase="'text'"
+                pInputText
+                type="text"
+                [(ngModel)]="rowData[col.field]"
+                [required]="col.required || false"
+                class="w-full"
+              />
+              <p-inputnumber
+                *ngSwitchCase="'number'"
+                [(ngModel)]="rowData[col.field]"
+                [required]="col.required || false"
+                [style]="{'width': '100%'}"
+                [inputStyle]="{'width': '100%'}"
+              ></p-inputnumber>
+              <p-inputnumber
+                *ngSwitchCase="'currency'"
+                [(ngModel)]="rowData[col.field]"
+                mode="currency"
+                currency="PEN"
+                locale="es-PE"
+                [required]="col.required || false"
+                class="w-full"
+              ></p-inputnumber>
+              <p-select
+                *ngSwitchCase="'select'"
+                [options]="col.options || []"
+                appendTo="body"
+                [(ngModel)]="rowData[col.field]"
+                [optionLabel]="col.optionLabel || 'label'"
+                [optionValue]="col.optionValue"
+                scrollHeight="150px"
+                placeholder="Seleccionar"
+                class="w-full"
+              ></p-select>
+              <p-datepicker
+                *ngSwitchCase="'date'"
+                [(ngModel)]="rowData[col.field]"
+                appendTo="body"
+                dateFormat="dd/mm/yy"
+                dataType="string"
+                [showIcon]="true"
+                [required]="col.required || false"
+                class="w-full"
+              ></p-datepicker>
+            </ng-container>
+          </ng-template>
+          <ng-template pTemplate="output">
+            <ng-container [ngSwitch]="col.type">
+              <span *ngSwitchCase="'text'">{{ rowData[col.field] }}</span>
+              <span *ngSwitchCase="'number'">{{ rowData[col.field] }}</span>
+              <span *ngSwitchCase="'currency'">{{
+                rowData[col.field] | currency: 'PEN'
+              }}</span>
+              <span *ngSwitchCase="'date'">{{ rowData[col.field] }}</span>
+              <ng-container *ngSwitchCase="'select'">
+              <p-tag
+                *ngIf="col.showTag; else plainText"
+                [value]="getDisplayValue(rowData, col)"
+                [severity]="rowData[col.field] | estadoInventarioSeverity"
+              ></p-tag>
+              <ng-template #plainText>
+                {{ getDisplayValue(rowData, col) }}
+              </ng-template>
+            </ng-container>
+            </ng-container>
+          </ng-template>
+        </p-cellEditor>
+      </td>
+      <td>
+        <div class="flex items-center justify-center gap-2">
+          <button
+            *ngIf="!editing"
+            pButton
+            pRipple
+            type="button"
+            pInitEditableRow
+            icon="pi pi-pencil"
+            (click)="onRowEditInit(rowData)"
+            class="p-button-text p-button-rounded p-button-secondary"
+          ></button>
+          <button
+            *ngIf="!editing"
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-trash"
+            (click)="onRowDelete(rowData)"
+            class="p-button-text p-button-rounded p-button-danger"
+          ></button>
+          <button
+            *ngIf="editing"
+            pButton
+            pRipple
+            type="button"
+            pSaveEditableRow
+            icon="pi pi-check"
+            (click)="onRowEditSave(rowData)"
+            class="p-button-text p-button-rounded p-button-success mr-2"
+          ></button>
+          <button
+            *ngIf="editing"
+            pButton
+            pRipple
+            type="button"
+            pCancelEditableRow
+            icon="pi pi-times"
+            (click)="onRowEditCancel(rowData, ri)"
+            class="p-button-text p-button-rounded p-button-danger"
+          ></button>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<!-- </p-dialog> -->

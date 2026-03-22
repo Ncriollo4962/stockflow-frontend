@@ -103,6 +103,10 @@ import { FloatLabelModule } from 'primeng/floatlabel';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { DrawerModule } from 'primeng/drawer';
+import { EstadoOrdenSeverityPipe } from './modules/shared/pipes/estado-orden-severity.pipe';
+import { EstadoInventarioSeverityPipe } from './modules/shared/pipes/estado-inventario-severity.pipe';
+import { AbastecimientoSeverityPipe } from './modules/shared/pipes/abastecimiento-severity.pipe';
+import { ClaseParetoSeverityPipe } from './modules/shared/pipes/clase-pareto-severity.pipe';
 
 @NgModule({
   imports: [
@@ -210,6 +214,10 @@ import { DrawerModule } from 'primeng/drawer';
     InputIconModule,
     AutoFocusModule,
     OverlayBadgeModule,
+    EstadoOrdenSeverityPipe,
+    EstadoInventarioSeverityPipe,
+    AbastecimientoSeverityPipe,
+    ClaseParetoSeverityPipe,
   ],
   exports: [
     TabsModule,
@@ -316,6 +324,10 @@ import { DrawerModule } from 'primeng/drawer';
     AutoFocusModule,
     OverlayBadgeModule,
     PopoverModule,
+    EstadoOrdenSeverityPipe,
+    EstadoInventarioSeverityPipe,
+    AbastecimientoSeverityPipe,
+    ClaseParetoSeverityPipe,
   ],
   providers: [],
 })

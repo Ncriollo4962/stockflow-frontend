@@ -1,0 +1,66 @@
+<p-dialog
+  header="Órdenes pendientes"
+  [modal]="true"
+  [resizable]="false"
+  [maximizable]="true"
+  appendTo="body"
+  [visible]="visible"
+  (visibleChange)="visible = $event; visibleChange.emit($event)"
+  [style]="{ width: '85vw' }"
+  [contentStyle]="{ height: '65vh' }"
+>
+  <div class="h-full flex flex-col gap-3">
+    <p-tabs
+      [value]="tab"
+      (valueChange)="tab = coerceTabValue($event); tabChange.emit(tab)"
+      class="flex-1 min-h-0"
+    >
+      <p-tablist>
+        <p-tab value="compras">Órdenes de compra</p-tab>
+        <p-tab value="ventas">Órdenes de venta</p-tab>
+      </p-tablist>
+
+      <p-tabpanels class="flex-1 min-h-0">
+        <p-tabpanel value="compras" class="h-full">
+          <div class="h-full min-h-0">
+            <app-master-detail-table
+              [data]="ordenesCompra"
+              [cols]="ordenCompraCols"
+              [detailsCols]="detalleCompraCols"
+              detailsField="detallesOrdenCompra"
+              dataKey="id"
+              [loading]="loading"
+              [rows]="10"
+              [paginator]="true"
+              [globalFilterFields]="['numeroOrden','proveedor.nombre','estado']"
+              actionLabel="Cargar"
+              actionIcon="pi pi-check"
+              actionSeverity="success"
+              (rowAction)="onCargarOrdenCompra($event)"
+            ></app-master-detail-table>
+          </div>
+        </p-tabpanel>
+
+        <p-tabpanel value="ventas" class="h-full">
+          <div class="h-full min-h-0">
+            <app-master-detail-table
+              [data]="ordenesVenta"
+              [cols]="ordenVentaCols"
+              [detailsCols]="detalleVentaCols"
+              detailsField="detallesOrdenVenta"
+              dataKey="id"
+              [loading]="loading"
+              [rows]="10"
+              [paginator]="true"
+              [globalFilterFields]="['numeroOrden','clienteNombre','estado']"
+              actionLabel="Cargar"
+              actionIcon="pi pi-check"
+              actionSeverity="success"
+              (rowAction)="onCargarOrdenVenta($event)"
+            ></app-master-detail-table>
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+</p-dialog>

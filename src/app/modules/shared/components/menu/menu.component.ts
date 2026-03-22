@@ -1,14 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 import { StyleClassModule } from 'primeng/styleclass';
+import { AuthService } from '../../../../core/auth/services/auth.service';
 
 @Component({
-  selector: 'menu',
+  selector: 'app-menu',
+  standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     RippleModule,
     ButtonModule,
     AvatarModule,
@@ -20,6 +24,8 @@ import { StyleClassModule } from 'primeng/styleclass';
 export class MenuComponent {
   @Input() isOverlay: boolean = false;
   @Output() shouldClose = new EventEmitter<void>();
+
+  public authService = inject(AuthService);
 
   closeMenu() {
     this.shouldClose.emit();

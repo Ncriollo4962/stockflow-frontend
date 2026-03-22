@@ -1,10 +1,18 @@
 import { Routes } from '@angular/router';
 
-export const modulesRoutes: Routes = [
+export const inventarioModulesRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./inventario.component').then((m) => m.InventarioComponent),
+      import('./inventario-item/inventario-item.component').then(
+        (m) => m.InventarioItemComponent,
+      ),
   },
-  { path: '', redirectTo: '', pathMatch: 'full' },
+  {
+    path: 'movimientos',
+    loadChildren: () =>
+      import('./movimiento-inventario/movimiento-inventario.routes').then(
+        (m) => m.movimientoInventarioModulesRoutes,
+      ),
+  },
 ];

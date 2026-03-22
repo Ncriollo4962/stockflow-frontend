@@ -1,0 +1,127 @@
+<div class="card shadow-sm text-text-main h-full px-6 py-2">
+    <p-table
+        #dt
+        [value]="data"
+        [rows]="rows"
+        [columns]="cols"
+        [paginator]="paginator"
+        [globalFilterFields]="globalFilterFields"
+        [tableStyle]="{ 'min-width': '75rem', width: '100%', 'table-layout': 'fixed' }"
+        styleClass="datatable-paginator-right"
+        [(selection)]="selection"
+        (selectionChange)="onSelectionChange($event)"
+        [rowHover]="true"
+        [dataKey]="dataKey"
+        [currentPageReportTemplate]="currentPageReportTemplate"
+        [showCurrentPageReport]="showCurrentPageReport"
+        [loading]="loading"
+    >
+        <ng-template #caption>
+            <div class="flex items-center justify-between">
+                <div #start>
+                    <p-button
+                        *ngIf="showCreate"
+                        label="Nuevo"
+                        icon="pi pi-plus"
+                        class="mr-2"
+                        (onClick)="shouldonCreate.emit()" />
+                    <p-button
+                        *ngIf="showExportExcel"
+                        severity="success"
+                        label="Excel"
+                        icon="pi pi-file-excel"
+                        class="mr-2"
+                        outlined
+                        (onClick)="onExportExcel()" />
+                    <p-button
+                        *ngIf="showExportPdf"
+                        severity="danger"
+                        label="PDF"
+                        icon="pi pi-file-pdf"
+                        class="mr-2"
+                        outlined
+                        (onClick)="onExportPdf()" />
+                    <p-button
+                        *ngIf="showDelete"
+                        severity="danger"
+                        label="Eliminar"
+                        icon="pi pi-trash"
+                        outlined
+                        (onClick)="deleteSelected()"
+                        [disabled]="!selection || !selection.length" />
+                </div>
+                <p-iconfield *ngIf="showGlobalFilter">
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input
+                        pInputText
+                        type="text"
+                        (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                        placeholder="Buscar..." />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th *ngIf="showSelection" style="width: 3rem" scope="col">
+                    <p-tableHeaderCheckbox />
+                </th>
+                <th *ngFor="let col of cols" [pSortableColumn]="col.field" [ngStyle]="getNormalizedColStyle(col)" scope="col">
+                    {{ col.header }}
+                    <p-sortIcon [field]="col.field" />
+                </th>
+                <th *ngIf="showEdit || showDelete" style="min-width: 12rem" scope="col">Acciones</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-rowData>
+            <tr >
+                <td *ngIf="showSelection" style="width: 3rem">
+                    <p-tableCheckbox [value]="rowData" />
+                </td>
+                <td *ngFor="let col of cols" [ngStyle]="getNormalizedColStyle(col)">
+                    <ng-container [ngSwitch]="col.type">
+                        <span *ngSwitchCase="'currency'">
+                            {{ getFieldValue(rowData, col.field) | currency: 'PEN':'S/ ' }}
+                        </span>
+                        <span *ngSwitchCase="'date'">
+                             {{ getFieldValue(rowData, col.field) | date: 'dd/MM/yyyy' }}
+                        </span>
+                        <span *ngSwitchCase="'tag'">
+                             <p-tag [value]="getFieldValue(rowData, col.field)" [severity]="col.tagSeverity ? col.tagSeverity(getFieldValue(rowData, col.field)) : undefined" />
+                        </span>
+                        <span *ngSwitchCase="'percent'">
+                            {{ getFieldValue(rowData, col.field) | number: '1.2-2' }}<ng-container *ngIf="getFieldValue(rowData, col.field) !== null && getFieldValue(rowData, col.field) !== undefined">%</ng-container>
+                        </span>
+                        <span *ngSwitchCase="'%'">
+                            {{ getFieldValue(rowData, col.field) | number: '1.2-2' }}<ng-container *ngIf="getFieldValue(rowData, col.field) !== null && getFieldValue(rowData, col.field) !== undefined">%</ng-container>
+                        </span>
+                        <span *ngSwitchCase="'number'">
+                            {{ getFieldValue(rowData, col.field) | number: '1.2-2' }}
+                        </span>
+                        <span *ngSwitchDefault>
+                            {{ getFieldValue(rowData, col.field) }}
+                        </span>
+                    </ng-container>
+                </td>
+                <td *ngIf="showEdit || showDelete">
+                    <p-button
+                        *ngIf="showEdit"
+                        icon="pi pi-pencil"
+                        class="mr-2"
+                        [rounded]="true"
+                        [outlined]="true"
+                        (onClick)="shouldonEdit.emit(rowData)" />
+                    <p-button
+                        *ngIf="showDelete"
+                        icon="pi pi-trash"
+                        severity="danger"
+                        [rounded]="true"
+                        [outlined]="true"
+                        (onClick)="shouldonDelete.emit(rowData)" />
+                </td>
+            </tr>
+        </ng-template>
+        <!-- <ng-template #summary>
+            <div class="flex items-center justify-between">Total: {{ data ? data.length : 0 }} registros.</div>
+        </ng-template> -->
+    </p-table>
+</div>

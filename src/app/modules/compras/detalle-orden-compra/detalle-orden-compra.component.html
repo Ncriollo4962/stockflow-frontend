@@ -1,0 +1,21 @@
+<div class="card shadow-sm text-text-main h-full px-6 py-4">
+    <p-toast />
+    <app-data-table
+        [data]="detallesOrdenCompra"
+        [cols]="cols"
+        [(selection)]="selectedDetallesOc"
+        [globalFilterFields]="globalFilterFields"
+        dataKey="nroItemTemp"
+        (shouldonCreate)="openNew()"
+        (shouldonEdit)="editProduct($event)"
+        (shouldonDelete)="deleteProduct($event)"
+        (shouldonDeleteSelected)="deleteAllProduct($event)"
+    ></app-data-table>
+
+    <p-confirmDialog [style]="{ width: '450px' }" />
+
+    <app-dialog-detalle-orden-compra
+        #dialogDetalle
+        (shouldNewDetalle)="agregarDetalleTabla($event)">
+    </app-dialog-detalle-orden-compra>
+</div>
