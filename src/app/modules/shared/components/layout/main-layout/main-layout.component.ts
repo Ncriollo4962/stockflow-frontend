@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, ViewChild } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
+import { AuthService } from '../../../../../core/auth/services/auth.service';
 import { ThemeService } from '../../../../../core/services/theme.service';
 import { GlobalLoadingComponent } from '../../global-loading/global-loading.component';
 import { ConfigPanelComponent } from '../../config-panel/config-panel.component';
@@ -22,6 +23,8 @@ import { TopbarComponent } from '../../topbar/topbar.component';
 export class MainLayoutComponent {
   @ViewChild('themePopover') themePopover!: ConfigPanelComponent;
   private readonly themeService = inject(ThemeService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   isDarkMode = this.themeService.isDarkMode;
   menuMode: 'static' | 'overlay' = 'static';
@@ -33,5 +36,10 @@ export class MainLayoutComponent {
 
   onMenuToggle() {
     this.visible = !this.visible;
+  }
+
+  onLogout() {
+    this.authService.logout();
+    this.router.navigateByUrl('/auth/login');
   }
 }

@@ -25,5 +25,15 @@
           (click)="onSettingsClick($event)"
           severity="secondary"
         />
+
+        <p-button
+          icon="pi pi-sign-out"
+          (click)="onLogout()"
+          severity="primary"
+          [outlined]="true"
+          pTooltip="Logout"
+          tooltipPosition="bottom"
+          tooltipStyleClass="whitespace-nowrap text-xs"
+        />
       </div>
     </div>
