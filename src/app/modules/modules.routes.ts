@@ -34,6 +34,34 @@ export const modulesRoutes: Routes = [
           import('./ventas/ventas.routes').then((m) => m.ventasModulesRoutes),
       },
       {
+        path: 'productos',
+        loadChildren: () =>
+          import('./productos/productos.routes').then(
+            (m) => m.productosModulesRoutes,
+          ),
+      },
+      {
+        path: 'categorias',
+        loadChildren: () =>
+          import('./categorias/categorias.routes').then(
+            (m) => m.categoriasModulesRoutes,
+          ),
+      },
+      {
+        path: 'ubicaciones',
+        loadChildren: () =>
+          import('./ubicaciones/ubicaciones.routes').then(
+            (m) => m.ubicacionesModulesRoutes,
+          ),
+      },
+      {
+        path: 'proveedores',
+        loadChildren: () =>
+          import('./proveedores/proveedores.routes').then(
+            (m) => m.proveedoresModulesRoutes,
+          ),
+      },
+      {
         path: 'reportes',
         loadChildren: () =>
           import('./reportes/reportes.routes').then(
@@ -44,9 +72,9 @@ export const modulesRoutes: Routes = [
         path: 'usuarios',
         canMatch: [RoleGuardCanMatch],
         data: { roles: ['ROLE_ADMIN_TI'] },
-        loadComponent: () =>
-          import('./usuarios/usuarios.component').then(
-            (m) => m.UsuariosComponent,
+        loadChildren: () =>
+          import('./usuarios/usuarios.routes').then(
+            (m) => m.usuariosModulesRoutes,
           ),
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

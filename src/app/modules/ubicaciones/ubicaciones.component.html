@@ -1,0 +1,25 @@
+<div class="card p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
+  <div class="flex-none flex flex-col gap-1 mb-4 px-4 pt-4">
+    <div class="flex items-center gap-2 text-primary">
+      <i class="pi pi-map-marker text-xl"></i>
+      <span class="text-xl font-semibold">Gestión de Ubicaciones</span>
+    </div>
+    <span class="text-surface-500 dark:text-surface-400 text-sm">
+      Administración de ubicaciones
+    </span>
+  </div>
+
+  <p-confirmDialog />
+
+  <app-data-table
+    #dataTable
+    [data]="ubicaciones"
+    [cols]="cols"
+    [globalFilterFields]="['nombre', 'descripcion']"
+    [(selection)]="selectedUbicaciones"
+    (shouldonCreate)="openNew()"
+    (shouldonEdit)="editUbicacion($event)"
+    (shouldonDelete)="deleteUbicacion($event)"
+    (shouldonDeleteSelected)="deleteSelectedUbicaciones($event)"
+  ></app-data-table>
+</div>

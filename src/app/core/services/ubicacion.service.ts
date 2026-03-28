@@ -42,4 +42,12 @@ export class UbicacionService {
       .delete<ApiResponse>(`${this.apiUrl}/delete/${id}`)
       .pipe(map(() => void 0));
   }
+
+  deleteMultiple(ids: number[]): Observable<void> {
+    return this.http
+      .delete<ApiResponse>(`${this.apiUrl}/delete-multiple`, {
+        body: ids,
+      })
+      .pipe(map(() => void 0));
+  }
 }

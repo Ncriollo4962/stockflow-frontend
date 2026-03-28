@@ -86,7 +86,7 @@
                              {{ getFieldValue(rowData, col.field) | date: 'dd/MM/yyyy' }}
                         </span>
                         <span *ngSwitchCase="'tag'">
-                             <p-tag [value]="getFieldValue(rowData, col.field)" [severity]="col.tagSeverity ? col.tagSeverity(getFieldValue(rowData, col.field)) : undefined" />
+                             <p-tag [value]="col.tagLabel ? col.tagLabel(getFieldValue(rowData, col.field), rowData) : (getFieldValue(rowData, col.field) | activoInactivo)" [severity]="col.tagSeverity ? col.tagSeverity(getFieldValue(rowData, col.field)) : undefined" />
                         </span>
                         <span *ngSwitchCase="'percent'">
                             {{ getFieldValue(rowData, col.field) | number: '1.2-2' }}<ng-container *ngIf="getFieldValue(rowData, col.field) !== null && getFieldValue(rowData, col.field) !== undefined">%</ng-container>

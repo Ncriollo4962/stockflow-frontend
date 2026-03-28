@@ -1,0 +1,25 @@
+<div class="card p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
+  <div class="flex-none flex flex-col gap-1 mb-4 px-4 pt-4">
+    <div class="flex items-center gap-2 text-primary">
+      <i class="pi pi-truck text-xl"></i>
+      <span class="text-xl font-semibold">Gestión de Proveedores</span>
+    </div>
+    <span class="text-surface-500 dark:text-surface-400 text-sm">
+      Administración de proveedores
+    </span>
+  </div>
+
+  <p-confirmDialog />
+
+  <app-data-table
+    #dataTable
+    [data]="proveedores"
+    [cols]="cols"
+    [globalFilterFields]="['codigo', 'nombre', 'contacto', 'email', 'telefono', 'ciudadPais', 'estado']"
+    [(selection)]="selectedProveedores"
+    (shouldonCreate)="openNew()"
+    (shouldonEdit)="editProveedor($event)"
+    (shouldonDelete)="deleteProveedor($event)"
+    (shouldonDeleteSelected)="deleteSelectedProveedores($event)"
+  ></app-data-table>
+</div>
