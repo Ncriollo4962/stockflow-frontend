@@ -11,21 +11,21 @@ export const modulesRoutes: Routes = [
         path: 'dashboard',
         loadComponent: () =>
           import('./dashboard/dashboard.component').then(
-            (m) => m.DashboardComponent,
+            (m) => m.DashboardComponent
           ),
       },
       {
         path: 'inventario',
         loadChildren: () =>
           import('./inventario/inventario.routes').then(
-            (m) => m.inventarioModulesRoutes,
+            (m) => m.inventarioModulesRoutes
           ),
       },
       {
         path: 'compras',
         loadChildren: () =>
           import('./compras/compras.routes').then(
-            (m) => m.comprasModulesRoutes,
+            (m) => m.comprasModulesRoutes
           ),
       },
       {
@@ -44,10 +44,8 @@ export const modulesRoutes: Routes = [
         path: 'usuarios',
         canMatch: [RoleGuardCanMatch],
         data: { roles: ['ROLE_ADMIN_TI'] },
-        loadComponent: () =>
-          import('./usuarios/usuarios.component').then(
-            (m) => m.UsuariosComponent,
-          ),
+        loadChildren: () =>
+          import('./usuarios/usuarios.routes').then((m) => m.modulesRoutes),
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],

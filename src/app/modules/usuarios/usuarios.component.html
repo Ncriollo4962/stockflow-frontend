@@ -9,7 +9,19 @@
     </span>
   </div>
 
-  <div class="p-4">
-    <p>usuarios works!</p>
-  </div>
+
+<p-confirmDialog />
+
+<app-data-table
+    #dataTable
+    [data]="usuarios"
+    [cols]="cols"
+    [globalFilterFields]="['codigo', 'nombre', 'email', 'roles']"
+    [(selection)]="selectedUsuarios"
+    (shouldonCreate)="openNew()"
+    (shouldonEdit)="editUsuario($event)"
+    (shouldonDelete)="deleteUsuario($event)"
+></app-data-table>
+
 </div>
+
