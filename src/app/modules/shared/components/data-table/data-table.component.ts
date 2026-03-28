@@ -9,12 +9,14 @@ import {
 import { Table } from 'primeng/table';
 import { ImportsModule } from '../../../../imports';
 import { GlobalLoadingService } from '../../../../core/services/global-loading.service';
+import { ActivoInactivoPipe } from '../../pipes/activo-inactivo.pipe';
 
 export interface Column {
   field: string;
   header: string;
   type?: 'text' | 'currency' | 'date' | 'tag' | 'percent' | '%' | 'number';
   style?: Record<string, any> | null;
+  tagLabel?: (value: any, rowData: any) => string | undefined;
   tagSeverity?: (
     value: any,
   ) =>
@@ -30,7 +32,7 @@ export interface Column {
 @Component({
   selector: 'app-data-table',
   standalone: true,
-  imports: [ImportsModule],
+  imports: [ImportsModule, ActivoInactivoPipe],
   templateUrl: './data-table.component.html',
 })
 export class DataTableComponent {

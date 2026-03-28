@@ -1,10 +1,3 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { UsuarioService } from '../../core/services/usuario.service';
@@ -13,7 +6,17 @@ import {
   Column,
   DataTableComponent,
 } from '../shared/components/data-table/data-table.component';
-import { Usuario } from '../../core/models/Usuario2';
+import { Usuario } from '../../core/models/Usuario';
+import { RolUsuarioLabelPipe } from '../shared/pipes/rol-usuario-label.pipe';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+
+type UsuarioRow = Usuario & { rolLabel?: string };
 
 @Component({
   selector: 'app-usuarios',
@@ -23,8 +26,8 @@ import { Usuario } from '../../core/models/Usuario2';
   templateUrl: './usuarios.component.html',
 })
 export class UsuariosComponent implements OnInit {
-  usuarios: Usuario[] = []; // Usamos Usuario2[] para tipar correctamente
-  selectedUsuarios: Usuario[] = [];
+  usuarios: UsuarioRow[] = [];
+  selectedUsuarios: UsuarioRow[] = [];
 
   @ViewChild(DataTableComponent) dataTable!: DataTableComponent;
 
@@ -37,39 +40,17 @@ export class UsuariosComponent implements OnInit {
   private readonly cd = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly rolUsuarioLabelPipe = new RolUsuarioLabelPipe();
 
   ngOnInit() {
-    this.initColumns();
     this.loadUsuarios();
-  }
-
-  private initColumns() {
-    this.cols = [
-      { field: 'codigo', header: 'Código' },
-      { field: 'nombre', header: 'Nombre Completo' },
-      { field: 'email', header: 'Email' },
-      { field: 'rolesDisplay', header: 'Roles' }, // Campo transformado
-      {
-        field: 'estado',
-        header: 'Estado',
-        type: 'tag',
-        tagSeverity: (value: boolean) => (value ? 'success' : 'danger'),
-      },
-      { field: 'fechaCreacion', header: 'F. Creación', type: 'date' },
-    ];
-
-    this.exportColumns = this.cols.map((col) => ({
-      title: col.header,
-      dataKey: col.field,
-    }));
   }
 
   loadUsuarios() {
     this.usuarioService.getUsuarios().subscribe((data) => {
-      // Transformamos los datos para que 'roles' sea un texto legible antes de llegar a la tabla
       this.usuarios = data.map((u) => ({
         ...u,
-        //rolesDisplay: u.roles?.join(', ') || 'Sin Rol', // Pisamos 'roles' con el string ya formateado
+        rolLabel: this.rolUsuarioLabelPipe.transform(u.rol),
       }));
       this.cd.markForCheck();
     });
@@ -78,17 +59,16 @@ export class UsuariosComponent implements OnInit {
       { field: 'codigo', header: 'Código' },
       { field: 'nombre', header: 'Nombre Completo' },
       { field: 'email', header: 'Email' },
-      { field: 'rol', header: 'Roles' }, // Ahora esto es un string, no un array
+      { field: 'rolLabel', header: 'Roles' },
       {
         field: 'estado',
         header: 'Estado',
         type: 'tag',
+        tagLabel: (value: boolean) => (value ? 'Activo' : 'Inactivo'),
         tagSeverity: (value: boolean) => (value ? 'success' : 'danger'),
       },
     ];
   }
-
-  // --- Métodos de Acción ---
 
   openNew() {
     this.router.navigate(['newUsuario'], { relativeTo: this.route });
@@ -113,12 +93,40 @@ export class UsuariosComponent implements OnInit {
               severity: 'success',
               summary: 'Exitoso',
               detail: 'Usuario Eliminado',
-              life: 3000,
+              life: 1000,
             });
+            this.loadUsuarios();
             this.cd.markForCheck();
           },
         });
       },
     });
+  }
+
+  deleteSelectedUsuarios(selected: Usuario[]) {
+    if (selected && selected.length > 0) {
+      this.confirmationService.confirm({
+        message:
+          '¿Estás seguro de que quieres eliminar los ' +
+          selected.length +
+          ' usuarios?',
+        header: 'Confirmar',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.usuarioService
+            .deleteMultipleUsuarios(selected.map((o) => o.id!))
+            .subscribe(() => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Usuarios eliminados',
+                detail: 'Todos los usuarios han sido eliminados',
+                life: 1500,
+              });
+              this.selectedUsuarios = [];
+              this.loadUsuarios();
+            });
+        },
+      });
+    }
   }
 }

@@ -1,7 +1,7 @@
 <div class="card p-2 m-0 shadow-lg bg-bg-card transition-colors duration-300">
   <div class="flex-none flex flex-col gap-1 mb-4 px-4 pt-4">
     <div class="flex items-center gap-2 text-primary">
-      <i class="pi" [ngClass]="isEditMode ? 'pi-user-edit' : 'pi-user-plus'" style="font-size: 1.5rem"></i>
+      <i class="pi text-xl" [ngClass]="isEditMode ? 'pi-user-edit' : 'pi-user-plus'"></i>
       <span class="text-xl font-semibold">{{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</span>
     </div>
     <span class="text-surface-500 dark:text-surface-400 text-sm">
@@ -17,30 +17,18 @@
           <label for="codigo" class="font-semibold text-text-main">Código de Usuario</label>
           <input pInputText id="codigo" formControlName="codigo"
                  placeholder="Ej: USR001" class="w-full h-11 input-custom-border" />
-          @if (form.get('codigo')?.invalid && form.get('codigo')?.touched) {
-            <small class="p-error">El código es requerido.</small>
-          }
         </div>
 
         <div class="flex flex-col gap-2">
           <label for="nombre" class="font-semibold text-text-main">Nombre Completo</label>
           <input pInputText id="nombre" formControlName="nombre"
                  placeholder="Nombre del usuario" class="w-full h-11 input-custom-border" />
-          @if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
-            <small class="p-error">El nombre es requerido.</small>
-          }
         </div>
 
         <div class="flex flex-col gap-2">
           <label for="email" class="font-semibold text-text-main">Correo Electrónico</label>
           <input pInputText id="email" formControlName="email"
                  placeholder="usuario@ejemplo.com" class="w-full h-11 input-custom-border" />
-          @if (form.get('email')?.invalid && form.get('email')?.touched) {
-            <small class="p-error">
-              @if (form.get('email')?.errors?.['required']) { Correo requerido. }
-              @else if (form.get('email')?.errors?.['email']) { Formato de correo inválido. }
-            </small>
-          }
         </div>
 
         <div class="flex flex-col gap-2">
@@ -49,12 +37,6 @@
                       [toggleMask]="true" [feedback]="!isEditMode"
                       placeholder="********" styleClass="w-full"
                       inputStyleClass="w-full h-11 input-custom-border"></p-password>
-          @if (!isEditMode && form.get('contrasena')?.invalid && form.get('contrasena')?.touched) {
-            <small class="p-error">La contraseña es requerida.</small>
-          }
-          @if (isEditMode) {
-            <small class="text-surface-500">Dejar en blanco para no cambiar.</small>
-          }
         </div>
 
         <div class="flex flex-col gap-2">
@@ -74,25 +56,10 @@
           </div>
         </div>
 
-        @if (isEditMode) {
-          <div class="flex flex-col gap-2 text-text-body">
-            <label class="font-semibold text-text-main">Fecha Creación</label>
-            <p class="p-2 border-1 border-surface-200 dark:border-surface-700 border-round bg-surface-50 dark:bg-surface-800 text-text-body">
-              {{ (form.get('fechaCreacion')?.value | date:'short') }}
-            </p>
-          </div>
-          <div class="flex flex-col gap-2 text-text-body">
-            <label class="font-semibold text-text-main">Última Modificación</label>
-            <p class="p-2 border-1 border-surface-200 dark:border-surface-700 border-round bg-surface-50 dark:bg-surface-800 text-text-body">
-              {{ (form.get('fechaModificacion')?.value | date:'short') || 'Sin modificaciones' }}
-            </p>
-          </div>
-        }
-
       </div>
     </p-fieldset>
 
-    <div class="flex justify-end gap-2 mt-6 mb-4">
+    <div class="flex justify-end gap-2 mt-3">
       <p-button label="Cancelar" icon="pi pi-times" severity="secondary" [outlined]="true" (onClick)="cancelar()"></p-button>
       <p-button [disabled]="btnSaveDisabled" [label]="isEditMode ? 'Actualizar Usuario' : 'Guardar Usuario'"
                 icon="pi pi-check" severity="primary" (onClick)="guardarUsuario()"></p-button>

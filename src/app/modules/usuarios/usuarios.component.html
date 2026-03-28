@@ -16,11 +16,12 @@
     #dataTable
     [data]="usuarios"
     [cols]="cols"
-    [globalFilterFields]="['codigo', 'nombre', 'email', 'roles']"
+    [globalFilterFields]="['codigo', 'nombre', 'email', 'rolLabel', 'rol']"
     [(selection)]="selectedUsuarios"
     (shouldonCreate)="openNew()"
     (shouldonEdit)="editUsuario($event)"
     (shouldonDelete)="deleteUsuario($event)"
+    (shouldonDeleteSelected)="deleteSelectedUsuarios($event)"
 ></app-data-table>
 
 </div>

@@ -7,6 +7,6 @@ export class Proveedor {
   public telefono: string | null = null;
   public direccion: string | null = null;
   public ciudadPais: string | null = null;
-  public estado: string | null = null;
+  public estado: boolean | null = null;
   public version: number | null = null; // solo lectura
 }

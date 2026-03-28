@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-export const modulesRoutes: Routes = [
+export const usuariosModulesRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
@@ -9,14 +9,14 @@ export const modulesRoutes: Routes = [
     path: 'newUsuario',
     loadComponent: () =>
       import('./regedit-usuario/regedit-usuario.component').then(
-        (m) => m.RegeditUsuarioComponent
+        (m) => m.RegeditUsuarioComponent,
       ),
   },
   {
     path: 'editUsuario/:id',
     loadComponent: () =>
       import('./regedit-usuario/regedit-usuario.component').then(
-        (m) => m.RegeditUsuarioComponent
+        (m) => m.RegeditUsuarioComponent,
       ),
   },
 ];

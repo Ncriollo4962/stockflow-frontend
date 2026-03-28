@@ -1,16 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../utils/ApiResponse';
-import { Usuario } from '../models/Usuario2';
+import { Usuario } from '../models/Usuario';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsuarioService {
   private readonly apiUrl = `${environment.HOST_STOCKFLOW}/usuarios`;
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getUsuarios(): Observable<Usuario[]> {
     return this.http
@@ -19,9 +19,14 @@ export class UsuarioService {
   }
 
   getUsuarioById(id: number): Observable<Usuario> {
-    return this.http
-      .get<ApiResponse>(`${this.apiUrl}/id/${id}`)
-      .pipe(map((response) => response.data || new Usuario()));
+    return this.http.get<ApiResponse>(`${this.apiUrl}/${id}`).pipe(
+      map((response) => response.data || new Usuario()),
+      catchError(() =>
+        this.http
+          .get<ApiResponse>(`${this.apiUrl}/id/${id}`)
+          .pipe(map((response) => response.data || new Usuario())),
+      ),
+    );
   }
 
   createUsuario(usuario: Usuario): Observable<Usuario> {
@@ -39,5 +44,12 @@ export class UsuarioService {
     return this.http
       .delete<ApiResponse>(`${this.apiUrl}/delete/${id}`)
       .pipe(map((response) => response.data || new Usuario()));
+  }
+  deleteMultipleUsuarios(ids: number[]): Observable<Usuario[]> {
+    return this.http
+      .delete<ApiResponse>(`${this.apiUrl}/delete-multiple`, {
+        body: ids,
+      })
+      .pipe(map((response) => response.data || []));
   }
 }

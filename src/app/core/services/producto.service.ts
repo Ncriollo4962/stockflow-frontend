@@ -16,7 +16,7 @@ export class ProductoService {
   getProductos(): Observable<Producto[]> {
     return this.http
       .get<ApiResponse>(`${this.apiUrl}/all`)
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data || []));
   }
 
   getProductoById(id: number): Observable<Producto> {
@@ -37,9 +37,17 @@ export class ProductoService {
       .pipe(map((response) => response.data));
   }
 
-  deleteProducto(producto: Producto): Observable<void> {
+  deleteProducto(id: number): Observable<void> {
     return this.http
-      .delete<ApiResponse>(`${this.apiUrl}/delete/${producto}`)
-      .pipe(map((response) => response.data));
+      .delete<ApiResponse>(`${this.apiUrl}/delete/${id}`)
+      .pipe(map(() => void 0));
+  }
+
+  deleteMultipleProductos(ids: number[]): Observable<void> {
+    return this.http
+      .delete<ApiResponse>(`${this.apiUrl}/delete-multiple`, {
+        body: ids,
+      })
+      .pipe(map(() => void 0));
   }
 }

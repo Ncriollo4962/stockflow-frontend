@@ -16,7 +16,7 @@ export class ProveedorService {
   getProveedores(): Observable<Proveedor[]> {
     return this.http
       .get<ApiResponse>(`${this.apiUrl}/all`)
-      .pipe(map((response) => response.data));
+      .pipe(map((response) => response.data || []));
   }
 
   getProveedorById(id: number): Observable<Proveedor> {
@@ -37,9 +37,17 @@ export class ProveedorService {
       .pipe(map((response) => response.data));
   }
 
-  deleteProveedor(proveedor: Proveedor): Observable<void> {
+  deleteProveedor(id: number): Observable<void> {
     return this.http
-      .delete<ApiResponse>(`${this.apiUrl}/delete/${proveedor}`)
-      .pipe(map((response) => response.data));
+      .delete<ApiResponse>(`${this.apiUrl}/delete/${id}`)
+      .pipe(map(() => void 0));
+  }
+
+  deleteMultipleProveedores(ids: number[]): Observable<void> {
+    return this.http
+      .delete<ApiResponse>(`${this.apiUrl}/delete-multiple`, {
+        body: ids,
+      })
+      .pipe(map(() => void 0));
   }
 }
