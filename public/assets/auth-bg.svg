@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#04060d"/>
+      <stop offset="0.58" stop-color="#081327"/>
+      <stop offset="1" stop-color="#06243a"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="50%" cy="52%" r="70%">
+      <stop offset="0" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.45"/>
+    </radialGradient>
+    <linearGradient id="ember" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f97316" stop-opacity="0.98"/>
+      <stop offset="0.55" stop-color="#fb923c" stop-opacity="0.86"/>
+      <stop offset="1" stop-color="#f59e0b" stop-opacity="0.76"/>
+    </linearGradient>
+    <linearGradient id="neonBlue" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.72"/>
+      <stop offset="1" stop-color="#60a5fa" stop-opacity="0.12"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e5e7eb" stop-opacity="0.35"/>
+      <stop offset="0.52" stop-color="#93c5fd" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#e5e7eb" stop-opacity="0.26"/>
+    </linearGradient>
+    <linearGradient id="metalFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e5e7eb" stop-opacity="0.18"/>
+      <stop offset="0.55" stop-color="#cbd5e1" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#94a3b8" stop-opacity="0.05"/>
+    </linearGradient>
+    <pattern id="blueprintGrid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+      <path d="M36 0H0V36" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
+    </pattern>
+    <pattern id="fasteners" width="260" height="260" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <g transform="translate(18 22)">
+          <polygon points="44,0 88,26 88,78 44,104 0,78 0,26"/>
+          <circle cx="44" cy="52" r="16"/>
+        </g>
+        <g transform="translate(148 24) rotate(16 38 38)">
+          <rect x="10" y="30" width="56" height="16" rx="8"/>
+          <circle cx="12" cy="38" r="11"/>
+          <circle cx="64" cy="38" r="11"/>
+        </g>
+        <g transform="translate(34 156) rotate(-14 44 44)">
+          <path d="M18 70l52-52 12 12-52 52z"/>
+          <path d="M14 74l10-10 12 12-10 10z"/>
+        </g>
+        <g transform="translate(170 168)">
+          <circle cx="30" cy="30" r="22"/>
+          <path d="M30 8v10M30 42v10M8 30h10M42 30h10"/>
+          <circle cx="30" cy="30" r="8"/>
+        </g>
+      </g>
+    </pattern>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.75 0" in="b" result="a"/>
+      <feMerge>
+        <feMergeNode in="a"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="grain" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch" result="n"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0" in="n" result="a"/>
+      <feBlend mode="overlay" in="SourceGraphic" in2="a"/>
+    </filter>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+
+  <g opacity="0.78">
+    <path d="M1120 -240 L2140 120 L1840 1240 L820 860 Z" fill="url(#ember)"/>
+    <path d="M1260 -280 L2260 80 L2140 340 L1140 -10 Z" fill="#ffffff" opacity="0.07"/>
+  </g>
+
+  <g opacity="0.70">
+    <rect width="1920" height="1080" fill="url(#blueprintGrid)"/>
+  </g>
+
+  <rect width="1920" height="1080" fill="url(#fasteners)" opacity="0.58"/>
+
+  <g opacity="0.30" fill="none" stroke="url(#neonBlue)" stroke-width="10" stroke-linecap="round">
+    <path d="M140 760 C360 560 620 520 860 420" />
+    <path d="M220 860 C460 650 740 630 980 520" />
+    <path d="M320 950 C600 740 900 760 1180 650" />
+  </g>
+
+  <g opacity="0.40">
+    <path d="M140 980 H760 V700 L520 540 L140 700 Z" fill="url(#metalFill)"/>
+    <path d="M140 700 L520 540 L760 700" fill="none" stroke="#ffffff" stroke-opacity="0.22" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M190 740 H710 M190 810 H710 M190 880 H710" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="8" stroke-linecap="round"/>
+    <path d="M260 700 V980 M450 700 V980 M640 700 V980" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="8" stroke-linecap="round"/>
+    <path d="M110 980 H790" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="12" stroke-linecap="round"/>
+  </g>
+
+  <g opacity="0.38">
+    <path d="M840 1020 H1860 V520 H840 Z" fill="#000000" opacity="0.12"/>
+    <path d="M880 980 H1820 V560 H880 Z" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="10" />
+    <g stroke="#ffffff" stroke-opacity="0.12" stroke-width="12" stroke-linecap="round">
+      <path d="M930 620 H1780"/>
+      <path d="M930 720 H1780"/>
+      <path d="M930 820 H1780"/>
+      <path d="M930 920 H1780"/>
+    </g>
+    <g stroke="#ffffff" stroke-opacity="0.09" stroke-width="10" stroke-linecap="round">
+      <path d="M1040 560 V980"/>
+      <path d="M1280 560 V980"/>
+      <path d="M1520 560 V980"/>
+      <path d="M1760 560 V980"/>
+    </g>
+    <g opacity="0.22">
+      <rect x="960" y="640" width="120" height="70" rx="10" fill="url(#metalFill)"/>
+      <rect x="1120" y="640" width="140" height="70" rx="10" fill="url(#metalFill)"/>
+      <rect x="1320" y="640" width="110" height="70" rx="10" fill="url(#metalFill)"/>
+      <rect x="1500" y="640" width="150" height="70" rx="10" fill="url(#metalFill)"/>
+      <rect x="1680" y="640" width="110" height="70" rx="10" fill="url(#metalFill)"/>
+      <rect x="980" y="740" width="150" height="70" rx="10" fill="url(#metalFill)"/>
+      <rect x="1160" y="740" width="120" height="70" rx="10" fill="url(#metalFill)"/>
+      <rect x="1330" y="740" width="160" height="70" rx="10" fill="url(#metalFill)"/>
+      <rect x="1520" y="740" width="130" height="70" rx="10" fill="url(#metalFill)"/>
+      <rect x="1690" y="740" width="90" height="70" rx="10" fill="url(#metalFill)"/>
+    </g>
+  </g>
+
+  <g opacity="0.24" stroke="url(#steel)" stroke-width="18" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(1480 220) rotate(18)">
+      <path d="M112 26c12 8 19 22 19 40 0 28-23 51-51 51-6 0-12-1-18-3L36 140l-22-22 31-31c-2-6-3-12-3-18 0-28 23-51 51-51 18 0 32 8 40 19l-19 19c-5-6-12-9-20-9-13 0-24 11-24 24 0 9 4 16 10 21l66-66z"/>
+      <path d="M36 140l-25 78 36 36 78-25"/>
+    </g>
+    <g transform="translate(240 170) rotate(-14)">
+      <path d="M46 30h80l48 48v38l-25 25H70L46 116z"/>
+      <path d="M102 30v50"/>
+      <path d="M170 142l42 42"/>
+      <path d="M186 126l28 28"/>
+    </g>
+  </g>
+
+  <g filter="url(#softGlow)">
+    <g opacity="0.22" fill="none" stroke="#ffffff" stroke-opacity="0.50" stroke-width="10" stroke-linecap="round">
+      <path d="M980 120 L1680 400"/>
+      <path d="M930 240 L1630 520"/>
+      <path d="M880 360 L1580 640"/>
+    </g>
+    <g opacity="0.36" fill="none" stroke="#fb923c" stroke-opacity="0.55" stroke-width="7" stroke-linecap="round">
+      <path d="M1080 160 L1740 420"/>
+      <path d="M1025 300 L1685 560"/>
+    </g>
+  </g>
+
+  <g opacity="0.38" fill="#ffffff">
+    <circle cx="1030" cy="140" r="2"/>
+    <circle cx="1100" cy="205" r="2"/>
+    <circle cx="1180" cy="265" r="2"/>
+    <circle cx="1260" cy="325" r="2"/>
+    <circle cx="1340" cy="385" r="2"/>
+    <circle cx="1420" cy="445" r="2"/>
+    <circle cx="1500" cy="505" r="2"/>
+  </g>
+
+  <rect width="1920" height="1080" fill="url(#vignette)"/>
+  <rect width="1920" height="1080" fill="#000000" opacity="0.06" filter="url(#grain)"/>
+</svg>
