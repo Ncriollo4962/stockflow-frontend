@@ -57,6 +57,7 @@ export class DataTableComponent {
     'Mostrando {first} a {last} de {totalRecords} registros';
 
   @Input() showCreate: boolean = true;
+  @Input() createLabel: string | null = null;
   @Input() showEdit: boolean = true;
   @Input() showDelete: boolean = true;
 
@@ -119,5 +120,10 @@ export class DataTableComponent {
   }
   onExportPdf() {
     this.exportPdf.emit();
+  }
+
+  get createButtonLabel(): string {
+    const label = this.createLabel?.trim();
+    return label ? label : 'Nuevo';
   }
 }
