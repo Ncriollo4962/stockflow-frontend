@@ -42,11 +42,15 @@ export class InventarioItemComponent implements OnInit {
     this.cols = [
       { field: 'producto.nombre', header: 'Producto' },
       { field: 'ubicacion.nombre', header: 'Ubicación' },
-      { field: 'lote', header: 'Lote' },
-      { field: 'fechaVencimiento', header: 'Vencimiento', type: 'date' },
-      { field: 'cantidad', header: 'Cantidad' },
-      { field: 'cantidadReservada', header: 'Reservada' },
-      { field: 'fechaUltimoConteo', header: 'Último Conteo', type: 'date' },
+      // { field: 'lote', header: 'Lote' },
+      // { field: 'fechaVencimiento', header: 'Vencimiento', type: 'date' },
+      { field: 'cantidad', header: 'Stock' },
+      { field: 'cantidadReservada', header: 'Cantidad Reservada' },
+      {
+        field: 'fechaUltimoConteo',
+        header: 'Fecha Último Conteo',
+        type: 'date',
+      },
     ];
 
     this.exportColumns = this.cols.map((col) => ({

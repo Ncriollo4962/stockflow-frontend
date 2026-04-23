@@ -10,6 +10,7 @@
   </div>
 
   <p-confirmDialog />
+  <div class="flex-1 overflow-auto min-h-0">
   <app-data-table
     #dataTable
     [data]="movimientos"
@@ -20,6 +21,7 @@
     [showEdit]="false"
     [showDelete]="false"
   ></app-data-table>
+  </div>
 </div>
 
 <app-regedit-movimiento-inventario

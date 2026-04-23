@@ -21,7 +21,7 @@
                 <div #start>
                     <p-button
                         *ngIf="showCreate"
-                        label="Nuevo"
+                        [label]="createButtonLabel"
                         icon="pi pi-plus"
                         class="mr-2"
                         (onClick)="shouldonCreate.emit()" />
